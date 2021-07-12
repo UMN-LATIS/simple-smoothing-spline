@@ -85,7 +85,7 @@ $$
 β̂ = inverseMatrix(transposed(X) * X + λ*I) * transposed(X) * y`
 $$
 
-Where I is the identity matrix and λ is a new input variable that we are introducing into the model. λ is controlled by a hyperparameter, α , that controls how strongly we penalize overfitting.
+Where I is the identity matrix and λ is a new input variable that we are introducing into the model. λ controls how strongly we penalize overfitting.
 
 ```
 const spline = new SmoothingSpline(matrixX, vectorY, lambda);
