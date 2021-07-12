@@ -1,0 +1,23 @@
+{
+  "name": "simple-smoothing-spline",
+  "description": "Fit a smoothing spline to collection of data points",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "snowpack dev",
+    "build": "snowpack build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "James Johnson <johnsojr@umn.edu>",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "eslint": "^7.30.0",
+    "snowpack": "^3.7.1"
+  },
+  "dependencies": {
+    "plotly.js-dist-min": "^2.2.1",
+    "prettier": "^2.3.2"
+  }
+}
