@@ -14,11 +14,12 @@
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "eslint": "^7.30.0",
-    "snowpack": "^3.7.1"
-  },
-  "dependencies": {
-    "mathjs": "^9.4.4",
+    "jest": "^27.0.6",
+    "snowpack": "^3.7.1",
     "plotly.js-dist-min": "^2.2.1",
     "prettier": "^2.3.2"
+  },
+  "dependencies": {
+    "mathjs": "^9.4.4"
   }
 }

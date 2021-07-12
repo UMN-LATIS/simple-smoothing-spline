@@ -16,9 +16,9 @@ const data = [
   { x: 4, y: 15 },
 ];
 
-const spline = new SmoothingSpline(data, { lambda: 1 });
+const spline = new SmoothingSpline(data, { lambda: 1000 });
 const splinePoints = spline.getPoints();
-// gets points {x, y} that can be plotted
+//
 
 spline.setLambda(0.5).getPoints();
 // sets Lambda to a new value and recalculates the spline points
@@ -27,7 +27,7 @@ spline.setLambda(0.5).getPoints();
 ## Installation
 
 ```console
-$ npm install simple-smoothing-Spline
+$ npm install simple-smoothing-spline
 ```
 
 ## Details
