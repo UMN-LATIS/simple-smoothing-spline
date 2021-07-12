@@ -1,36 +1,53 @@
 import Plotly from "plotly.js-dist-min";
 import SmoothingSpline from "./index.js";
+import { CCS, SpR } from "./data.js";
+
+const PLOT_NAME = "plot";
 
 // helper to convert a collection of points to a
 // plotly trace
-const dataToPlotlyTrace = (collectionOfPoints, { mode = "markers" }) =>
+const dataToPlotlyTrace = (
+  collectionOfPoints,
+  { name, mode = "markers" } = {}
+) =>
   collectionOfPoints.reduce(
     (acc, { x, y }) => ({
       ...acc,
       x: acc.x.concat(x),
       y: acc.y.concat(y),
     }),
-    { x: [], y: [], mode, type: "scatter" }
+    { x: [], y: [], mode, type: "scatter", name }
   );
 
-const data = [
-  { x: 1, y: 0.5 },
-  { x: 2, y: 3 },
-  { x: 3, y: 8.5 },
-  { x: 4, y: 20 },
-  { x: 1, y: 1 },
-  { x: 2, y: 5 },
-  { x: 3, y: 11 },
-  { x: 4, y: 15 },
-];
-
-const spline = new SmoothingSpline(data, { lambda: 1 });
-// const splinePoints = spline.getPoints();
-// gets points {x, y} that can be plotted
-
-// const splineWithSmallerLambda = spline.setLambda(0.5).getPoints();
+const getLambdaFromInput = () =>
+  0.0001 * 2 ** Number.parseFloat(document.querySelector("#smoothness").value);
+const spline = new SmoothingSpline([...CCS, ...SpR], {
+  lambda: getLambdaFromInput(),
+});
 
 // create plotly traces
-const traces = [data].map(dataToPlotlyTrace);
-traces.push(dataToPlotlyTrace(spline.getPoints(0, 5, 0.01), { mode: "line" }));
-Plotly.newPlot("plot", traces);
+const traces = [
+  dataToPlotlyTrace(CCS, { name: "CCS" }),
+  dataToPlotlyTrace(SpR, { name: "SpR" }),
+];
+
+traces.push(
+  dataToPlotlyTrace(spline.getPoints(), {
+    mode: "line",
+    name: "smoothing spline",
+  })
+);
+Plotly.newPlot(PLOT_NAME, traces);
+
+document.querySelector("#smoothness").addEventListener("change", () => {
+  const lambda = getLambdaFromInput();
+  document.getElementById("lambda-value").innerText = lambda;
+  spline.setLambda(lambda);
+
+  // remove the last trace
+  Plotly.deleteTraces(PLOT_NAME, -1);
+  Plotly.addTraces(
+    PLOT_NAME,
+    dataToPlotlyTrace(spline.getPoints(1930, 2018, 0.01), { mode: "line" })
+  );
+});

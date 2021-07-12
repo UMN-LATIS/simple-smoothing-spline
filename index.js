@@ -11,9 +11,13 @@ const pos = (val) => Math.max(val, 0);
  *  - https://towardsdatascience.com/ridge-regression-for-better-usage-2f19b3a202db
  */
 export default class SmoothingSpline {
-  constructor(collectionOfPoints, { lamdba = 0.5 }) {
+  constructor(collectionOfPoints, { lambda = 0.5 } = {}) {
+    console.log({ lambda });
     this.data = collectionOfPoints;
-    this.lamdba = lamdba;
+    // scaling lambda ... confused about why we need to do this?
+    // this.lambda = 0.00001 * Math.pow(2, lambda);
+    this.lambda = lambda;
+    this.solveForBetas();
   }
 
   getAllXs() {
@@ -22,6 +26,11 @@ export default class SmoothingSpline {
 
   getAllYs() {
     return this.data.map((pt) => pt.y);
+  }
+
+  setLambda(lambda) {
+    this.lambda = lambda;
+    this.solveForBetas();
   }
 
   // creates a matrix M and vector y s.t. M*β = y
@@ -68,13 +77,14 @@ export default class SmoothingSpline {
     const transMdotM = multiply(Mtransposed, M);
     const rowsOfTransMdotM = transMdotM.size()[0];
     const ident = identity(rowsOfTransMdotM);
-    const lambdaIdent = multiply(this.lamdba, ident);
+    const lambdaIdent = multiply(this.lambda, ident);
     const inner = add(transMdotM, lambdaIdent);
-    console.log({ inner });
+    console.log({ lambdaIdent, inner });
 
     const inverseInner = inv(inner);
     const productOfInverseInnerAndTransM = multiply(inverseInner, Mtransposed);
     const betas = multiply(productOfInverseInnerAndTransM, yColVector);
+    this.betas = betas;
     return betas;
   }
 
@@ -91,17 +101,17 @@ export default class SmoothingSpline {
     );
   }
 
-  getPoints(min, max, stepSize) {
-    // const f = (x) => x ** 2;
+  getPoints() {
+    const minX = Math.min(...this.getAllXs());
+    const maxX = Math.max(...this.getAllXs());
+    const stepSize = (maxX - minX) / 1000;
     const splinePoints = [];
-    const betas = this.solveForBetas();
-    console.log({ betas });
+    const betas = this.betas || this.solveForBetas();
 
-    for (let i = min; i <= max; i += stepSize) {
+    for (let i = minX; i <= maxX; i += stepSize) {
       const col = this.basisColVector(i);
       const y = multiply(betas, col);
       const pt = { x: i, y };
-      console.log({ pt });
       splinePoints.push(pt);
     }
     return splinePoints;

@@ -8,6 +8,19 @@
   </head>
   <body>
     <h1>Smoothing Spline Test</h1>
+    <div>
+      <label for="smoothness">Smoothing</label>
+      <input
+        type="range"
+        id="smoothness"
+        name="smoothness"
+        min="0"
+        max="80"
+        value="25"
+        step="1"
+      />
+      <p>λ: <span id="lambda-value"></span></p>
+    </div>
     <div id="plot"></div>
     <script type="module" src="plot.js"></script>
   </body>
