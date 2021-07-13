@@ -51,9 +51,9 @@ function render(state) {
 
   // get points for the spline
   const data = getAllData(state);
-  const { spline, points } = smoothingSpline(data, state.lambda);
+  const spline = smoothingSpline(data, { lambda: state.lambda });
 
-  plot({ ...state.data, "smoothing spline": points }, PLOT_ID);
+  plot({ ...state.data, "smoothing spline": spline.points }, PLOT_ID);
 }
 
 // wait for document ready

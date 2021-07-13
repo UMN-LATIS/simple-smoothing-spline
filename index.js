@@ -102,7 +102,7 @@ function generateSplinePoints(spline, data) {
   return splinePoints;
 }
 
-export default function smoothingSpline(data, lambda) {
+export default function smoothingSpline(data, { lambda = 1000 } = {}) {
   // the coefficients of our spline
   const betas = solveForBetas(data, lambda);
 
@@ -125,7 +125,7 @@ export default function smoothingSpline(data, lambda) {
   const splinePoints = generateSplinePoints(splineFn, data);
 
   return {
-    spline: splineFn,
+    fn: splineFn,
     points: splinePoints,
   };
 }
