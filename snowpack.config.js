@@ -7,12 +7,7 @@ export default {
   plugins: [
     /* ... */
   ],
-  packageOptions: {
-    source: "remote",
-    types: true,
-    baseUrl: "./",
-    paths: { "*": ["types/*"] },
-  },
+  packageOptions: {},
   devOptions: {
     openUrl: "/example/",
   },

@@ -13,19 +13,15 @@
   "author": "James Johnson <johnsojr@umn.edu>",
   "license": "MIT",
   "devDependencies": {
-    "@sindresorhus/tsconfig": "^1.0.2",
-    "@types/jest": "^26.0.24",
-    "@typescript-eslint/eslint-plugin": "^4.28.2",
-    "@typescript-eslint/parser": "^4.28.2",
     "d3": "^7.0.0",
     "eslint": "^7.30.0",
     "jest": "^27.0.6",
     "plotly.js-dist": "^2.2.1",
     "prettier": "^2.3.2",
-    "snowpack": "^3.7.1",
-    "typescript": "^4.3.5"
+    "snowpack": "^3.7.1"
   },
   "dependencies": {
-    "mathjs": "^9.4.4"
+    "mathjs": "^9.4.4",
+    "ramda": "^0.27.1"
   }
 }

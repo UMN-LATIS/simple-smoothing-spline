@@ -14,12 +14,11 @@ const recordRender = (plotId) => (previousRenders[plotId] = true);
  * or uses Plotly.react to update if we've have previously
  * rendered this plotId.
  */
-function renderPlot(traces, plotId) {
+function renderPlot(plotId, traces) {
   if (hasPreviouslyRendered(plotId)) {
-    return Plotly.react(traces);
+    return Plotly.react(plotId, traces);
   }
-  console.log({ Plotly });
-  Plotly.newPlot(traces);
+  Plotly.newPlot(plotId, traces);
   recordRender(plotId);
 }
 
@@ -60,5 +59,5 @@ function toTraces(dataSetDict) {
  */
 export default function plot(dataSetDict, plotId = "plot") {
   const traces = toTraces(dataSetDict);
-  renderPlot(traces, plotId);
+  renderPlot(plotId, traces);
 }
