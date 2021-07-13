@@ -12,7 +12,6 @@ const pos = (val) => Math.max(val, 0);
  */
 export default class SmoothingSpline {
   constructor(collectionOfPoints, { lambda = 0.5 } = {}) {
-    console.log({ lambda });
     this.data = collectionOfPoints;
     // scaling lambda ... confused about why we need to do this?
     // this.lambda = 0.00001 * Math.pow(2, lambda);
@@ -79,7 +78,6 @@ export default class SmoothingSpline {
     const ident = identity(rowsOfTransMdotM);
     const lambdaIdent = multiply(this.lambda, ident);
     const inner = add(transMdotM, lambdaIdent);
-    console.log({ lambdaIdent, inner });
 
     const inverseInner = inv(inner);
     const productOfInverseInnerAndTransM = multiply(inverseInner, Mtransposed);

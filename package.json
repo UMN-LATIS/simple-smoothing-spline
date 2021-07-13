@@ -3,21 +3,26 @@
   "description": "Fit a smoothing spline to collection of data points",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "test:watch": "npm run test -- --watch"
   },
   "author": "James Johnson <johnsojr@umn.edu>",
   "license": "MIT",
   "devDependencies": {
+    "@sindresorhus/tsconfig": "^1.0.2",
+    "@types/jest": "^26.0.24",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "eslint": "^7.30.0",
     "jest": "^27.0.6",
-    "snowpack": "^3.7.1",
     "plotly.js-dist-min": "^2.2.1",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "snowpack": "^3.7.1",
+    "typescript": "^4.3.5"
   },
   "dependencies": {
     "mathjs": "^9.4.4"
