@@ -2,16 +2,19 @@
 // See all supported options: https://www.snowpack.dev/reference/configuration
 
 /** @type {import("snowpack").SnowpackUserConfig } */
-module.exports = {
+export default {
   mount: {},
   plugins: [
     /* ... */
   ],
   packageOptions: {
-    /* ... */
+    source: "remote",
+    types: true,
+    baseUrl: "./",
+    paths: { "*": ["types/*"] },
   },
   devOptions: {
-    openUrl: "/example",
+    openUrl: "/example/",
   },
   buildOptions: {
     /* ... */

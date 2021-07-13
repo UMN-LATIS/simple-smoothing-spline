@@ -2,7 +2,7 @@
   "name": "simple-smoothing-spline",
   "description": "Fit a smoothing spline to collection of data points",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
     "start": "snowpack dev",
@@ -17,9 +17,10 @@
     "@types/jest": "^26.0.24",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
+    "d3": "^7.0.0",
     "eslint": "^7.30.0",
     "jest": "^27.0.6",
-    "plotly.js-dist-min": "^2.2.1",
+    "plotly.js-dist": "^2.2.1",
     "prettier": "^2.3.2",
     "snowpack": "^3.7.1",
     "typescript": "^4.3.5"
