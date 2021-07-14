@@ -48,5 +48,9 @@
   },
   "dependencies": {
     "mathjs": "^9.4.4"
+  },
+  "np": {
+    "yarn": false,
+    "contents": "dist"
   }
 }
