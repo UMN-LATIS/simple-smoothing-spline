@@ -1,6 +1,5 @@
-import { expect } from "@jest/globals";
 import "jest";
-import { forEach } from "mathjs";
+import { expect } from "@jest/globals";
 import smoothingSpline from "../index";
 
 const data = [
