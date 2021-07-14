@@ -53,6 +53,10 @@ Returns:
   // y is value on the spline when x = 3
   ```
 
+## Example
+
+To see an example of using this package with [plotlyjs](https://github.com/plotly/plotly.js/) check out the [example folder](https://github.com/UMN-LATIS/simple-smoothing-spline/tree/main/example).
+
 ## About
 
 - [Background notes and references](./NOTES.md)

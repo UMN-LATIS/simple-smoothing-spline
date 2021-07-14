@@ -1,66 +1,23 @@
-import { createStore } from "./store.js";
+import store from "./store/store.js";
 import smoothingSpline from "../index.js";
-import { CCS, SpR } from "./data.js";
-import plot from "./plot.js";
+import plot from "./helpers/plot.js";
+import getAllData from "./helpers/getAllData.js";
+import handleInputChange from "./helpers/handleInputChange.js";
+import onReady from "./helpers/onReady.js";
 
-let initialState = {
-  data: {
-    CCS,
-    SpR,
-  },
-  lambda: 1000,
-};
-
-// Actions
-const INPUT_CHANGE = "INPUT_CHANGE";
-
-// process any chnages to our application
-function rootReducer(state = initialState, action) {
-  switch (action.type) {
-    case INPUT_CHANGE:
-      return { ...state, lambda: action.payload };
-    default:
-      return state;
-  }
-}
-
-const store = createStore(rootReducer);
-
-function getAllData(state) {
-  return Object.keys(state.data).reduce(
-    (acc, key) => [...acc, ...state.data[key]],
-    []
-  );
-}
-
-function handleInputChange(event) {
-  const sliderValue = Number.parseInt(event.target.value);
-  // scaling lambda based on slider
-  const newLambda = 0.00001 * 2 ** sliderValue;
-  store.dispatch({
-    type: INPUT_CHANGE,
-    payload: newLambda,
-  });
-}
+const PLOT_ID = "plot";
 
 function render(state) {
-  const PLOT_ID = "plot";
-
-  // update lambda
+  // update lambda to match the state value
   document.querySelector("#lambda-value").textContent = state.lambda;
 
   // get points for the spline
   const data = getAllData(state);
   const spline = smoothingSpline(data, { lambda: state.lambda });
 
+  // render plot with data and smoothing spline points
   plot({ ...state.data, "smoothing spline": spline.points }, PLOT_ID);
 }
-
-// wait for document ready
-const onReady = (fn) =>
-  document.readyState !== "loading"
-    ? fn()
-    : document.addEventListener("DOMContentLoaded", fn);
 
 onReady(() => {
   store.subscribe(render);
