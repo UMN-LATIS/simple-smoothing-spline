@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": "UMN-LATIS/simple-smoothing-spline",
   "type": "module",
-  "exports": "./dist/index.js",
+  "exports": "./index.js",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
@@ -48,9 +48,5 @@
   },
   "dependencies": {
     "mathjs": "^9.4.4"
-  },
-  "np": {
-    "yarn": false,
-    "contents": "dist"
   }
 }
