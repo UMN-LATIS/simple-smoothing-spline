@@ -42,4 +42,23 @@ Parameters:
 - `data` - an array of data points in the form of `{x: 1, y: 2}`.
 - `opts.lambda = 1000` - lambda parameter for Ridge regression. This is the tuning parameter for the regression function. The higher the lambda, the smoother the spline will be. By default, this is 1000.
 
+Returns:
+
+- `spline.points` - An array of `{x, y}` points on the smoothing spline in the range of the data (between min(x) and max(x)).
+- `spline.fn` - A function to get an arbitrary f(x) for a given x.
+  Example:
+  ```js
+  const spline = smoothingSpline(data, { lambda: 2 ** 8 });
+  const y = spline.fn(3);
+  // y is value on the spline when x = 3
+  ```
+
+## About
+
+- [Background notes and references](./NOTES.md)
+- [Maintainers](.github/CODEOWNERS)
+- [Contributors](https://github.com/UMN-LATIS/simple-smoothing-spline)
+
 ## License
+
+MIT
