@@ -1,5 +1,7 @@
 import { matrix, transpose, identity, multiply, add, inv } from "mathjs";
-import { pipe } from "ramda";
+
+class InvalidLambdaError extends Error {}
+class InvalidDataObject extends Error {}
 
 // Positive or 0. Needed in basis functions
 const pos = (val) => Math.max(val, 0);
@@ -73,7 +75,8 @@ function solveForBetas(data, lambda) {
     multiply(lambda, identity(numOfColsOfX))
   );
 
-  const betas = mult(inv(inner), Xtrans, y);
+  const invInner = inv(inner);
+  const betas = mult(invInner, Xtrans, y);
   return betas;
 }
 
@@ -102,7 +105,25 @@ function generateSplinePoints(spline, data) {
   return splinePoints;
 }
 
+function isDataValid(data) {
+  const checks = [
+    (data) => data instanceof Array,
+    (data) =>
+      data.every((pt) => pt.hasOwnProperty("x") && pt.hasOwnProperty("y")),
+  ];
+  return checks.every((check) => check(data));
+}
+
 export default function smoothingSpline(data, { lambda = 1000 } = {}) {
+  if (lambda <= 0) {
+    throw new InvalidLambdaError("lambda must be greater than 0");
+  }
+  if (!isDataValid(data)) {
+    throw new InvalidDataObject(
+      "Invalid data object. data must be an array of points {x, y}."
+    );
+  }
+
   // the coefficients of our spline
   const betas = solveForBetas(data, lambda);
 

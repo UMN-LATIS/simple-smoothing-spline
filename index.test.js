@@ -1,6 +1,7 @@
 import { expect } from "@jest/globals";
 import "jest";
-import SmoothingSpline from "./index";
+import { forEach } from "mathjs";
+import smoothingSpline from "./index";
 
 const data = [
   { x: 1, y: 0.5 },
@@ -13,47 +14,33 @@ const data = [
   { x: 4, y: 15 },
 ];
 
-const moarData = [
-  { x: 1, y: 1.5 },
-  { x: 2, y: 5.3 },
-  { x: 3, y: 20 },
-  { x: 4, y: 13 },
-];
-
 describe("simple-smoothing-spline", () => {
-  it("creates a SmoothingSpline given a collection of points", () => {
-    const spline = new SmoothingSpline(data);
-    expect(spline).toBeInstanceOf(SmoothingSpline);
-    expect(spline.data).toEqual(data);
+  it("creates spline points with given data", () => {
+    const spline = smoothingSpline(data);
+    expect(spline.points).toMatchSnapshot();
   });
 
-  it.todo("takes an optional lambda parameter");
-
-  it.todo("throws an error if points are not in the expected format");
-
-  describe("getAllXs", () => {
-    it.todo("gets all x values from the data set");
+  it("makes a spline function that gives a y for a given x", () => {
+    const spline = smoothingSpline(data);
+    spline.points.forEach(({ x, y }) => expect(spline.fn(x)).toBe(y));
   });
 
-  describe("getAllYs", () => {
-    it.todo("gets all y values from the data set");
+  it("takes an optional lambda parameter", () => {
+    const spline = smoothingSpline(data, { lambda: 1 });
+    expect(spline.fn(2)).toMatchInlineSnapshot(`3.9309522146973404`);
+    expect(spline.fn(3)).toMatchInlineSnapshot(`9.74752733088028`);
   });
 
-  describe("setLambda", () => {
-    it.todo("changes the lambda value");
+  it("throws an error unless lambda is positive", () => {
+    const testFn = () => smoothingSpline(data, { lambda: 0 });
+    expect(testFn).toThrowError("lambda must be greater than 0");
   });
 
-  describe("getBasisMatrix", () => {
-    it.todo("creates a basis matrix from the x data points");
-  });
-
-  describe("solveForBetas", () => {
-    it.todo("uses Ridge Regression to solve for beta coeffs");
-  });
-
-  describe("getPoints", () => {
-    it.todo("gets points for the smoothing spline");
-    it.todo("gets points in the range minX and maxX");
-    it.todo("gets updates points after lambda changes");
+  it("throws an error if data is not an array of points {x, y}", () => {
+    const badData = [1, 2, 3, 4];
+    const testFn = () => smoothingSpline(badData);
+    expect(testFn).toThrowError(
+      `Invalid data object. data must be an array of points {x, y}.`
+    );
   });
 });
