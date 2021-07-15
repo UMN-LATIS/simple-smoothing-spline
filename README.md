@@ -28,9 +28,6 @@ const myY = spline.fn(2.5);
 // 6.25
 ```
 
-Example:
-
-
 ## Installation
 
 ### Using NPM or Yarn
