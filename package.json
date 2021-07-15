@@ -26,13 +26,14 @@
     "analysis"
   ],
   "scripts": {
+    "start": "npm run build && cp -r dist example && serve example",
     "dev": "concurrently \"tsc -w\" \"npm run bundle -- -w\"",
     "prepublishOnly": "npm run build",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint",
     "publish": "np",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist example/dist",
     "build": "npm run clean && npm run lint && tsc --project tsconfig.json && npm run bundle",
     "bundle": "rollup -c rollup.config.js dist/index.js"
   },
@@ -46,20 +47,18 @@
     "@types/jest": "^26.0.24",
     "@types/node": "^16.3.2",
     "concurrently": "^6.2.0",
-    "d3": "^7.0.0",
     "eslint": "^7.30.0",
     "jest": "^27.0.6",
     "np": "^7.5.0",
-    "plotly.js-dist": "^2.2.1",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.53.1",
     "rollup-plugin-terser": "^7.0.2",
-    "snowpack": "^3.8.2",
     "terser": "^5.7.1",
     "ts-jest": "^27.0.3",
     "ts-node": "^10.1.0",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "serve": "^12.0.0"
   },
   "dependencies": {
     "mathjs": "^9.4.4"
