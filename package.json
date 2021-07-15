@@ -1,7 +1,7 @@
 {
   "name": "simple-smoothing-spline",
   "description": "Fit a smoothing spline to collection of data points",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "repository": "UMN-LATIS/simple-smoothing-spline",
   "main": "dist/index.js",
