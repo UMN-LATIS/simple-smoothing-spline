@@ -32,7 +32,7 @@
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint",
-    "publish": "np",
+    "publish": "npm run build && np",
     "clean": "rimraf dist example/dist",
     "build": "npm run clean && npm run lint && tsc --project tsconfig.json && npm run bundle",
     "bundle": "rollup -c rollup.config.js dist/index.js"
