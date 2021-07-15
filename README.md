@@ -2,6 +2,7 @@
 
 > Fit a smoothing spline to collection of data points
 
+[![Screenshot of Simple Smoothing Spline Demo](public/simple-smoothing-spline-screenshot.png)](https://umn-latis.github.io/simple-smoothing-spline)
 ## Usage
 
 ```js
@@ -27,6 +28,9 @@ const myY = spline.fn(2.5);
 // 6.25
 ```
 
+Example:
+
+
 ## Installation
 
 ```console
@@ -49,7 +53,6 @@ Then, in your script, you can call a global `simpleSmoothingSpline ()` function.
 ```js
 const spline = simpleSmoothingSpline(data, { lambda: 1000 });
 ```
-
 ## API
 
 ### `simpleSmoothingSpline(data, opts)`
@@ -74,7 +77,7 @@ Returns:
 
 ## Example
 
-To see an example of using this package with [plotlyjs](https://github.com/plotly/plotly.js/) check out the [example folder](https://github.com/UMN-LATIS/simple-smoothing-spline/tree/main/example).
+An example using Plotly JS can be found at <https://umn-latis.github.io/simple-smoothing-spline>
 
 ## About
 
