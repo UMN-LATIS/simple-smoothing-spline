@@ -1,6 +1,4 @@
-// Comment this next line out if using simpleSmoothingSpline
-// from a CDN. See the index.html file.
-import simpleSmoothingSpline from "./dist/index.mjs";
+/* global simpleSmoothingSpline */
 import store from "./store/store.js";
 import plot from "./helpers/plot.js";
 import getAllData from "./helpers/getAllData.js";
