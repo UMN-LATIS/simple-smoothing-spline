@@ -1,4 +1,4 @@
-# Smoothing Spline
+# Simple Smoothing Spline
 
 > Fit a smoothing spline to collection of data points
 
@@ -16,7 +16,7 @@ const data = [
   { x: 4, y: 15 },
 ];
 
-const spline = smoothingSpline(data, { lambda: 1000 });
+const spline = simpleSmoothingSpline(data, { lambda: 1000 });
 
 // spline.points is a collection of {x, y} values
 // between the min and max the x values in the data set
@@ -33,9 +33,26 @@ const myY = spline.fn(2.5);
 npm install simple-smoothing-spline
 ```
 
+or use it directly as a script tag, added before your main script
+
+```html
+<!-- index.html -->
+<script
+  src="https://unpkg.com/simple-smoothing-spline/dist/index.umd.min.js"
+  async
+></script>
+<script src="./main.js" type="module"></script>
+```
+
+Then, in your script, you can call a global `simpleSmoothingSpline ()` function.
+
+```js
+const spline = simpleSmoothingSpline(data, { lambda: 1000 });
+```
+
 ## API
 
-### `smoothingSpline(data, opts)`
+### `simpleSmoothingSpline(data, opts)`
 
 Parameters:
 
@@ -46,9 +63,11 @@ Returns:
 
 - `spline.points` - An array of `{x, y}` points on the smoothing spline in the range of the data (between min(x) and max(x)).
 - `spline.fn` - A function to get an arbitrary f(x) for a given x.
+
   Example:
+
   ```js
-  const spline = smoothingSpline(data, { lambda: 2 ** 8 });
+  const spline = simpleSmoothingSpline(data, { lambda: 2 ** 8 });
   const y = spline.fn(3);
   // y is value on the spline when x = 3
   ```
