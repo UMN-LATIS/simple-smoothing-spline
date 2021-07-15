@@ -52,7 +52,7 @@ Added this **before** your main script:
 ></script>
 ```
 
-Then, in your scripts, you can call a global `simpleSmoothingSpline ()` function.
+Then, in your scripts, you can call a global `simpleSmoothingSpline()` function.
 
 ## API
 
