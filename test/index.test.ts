@@ -1,6 +1,5 @@
-import "jest";
 import { expect } from "@jest/globals";
-import smoothingSpline from "../index";
+import smoothingSpline from "../src/index";
 
 const data = [
   { x: 1, y: 0.5 },
@@ -33,13 +32,5 @@ describe("simple-smoothing-spline", () => {
   it("throws an error unless lambda is positive", () => {
     const testFn = () => smoothingSpline(data, { lambda: 0 });
     expect(testFn).toThrowError("lambda must be greater than 0");
-  });
-
-  it("throws an error if data is not an array of points {x, y}", () => {
-    const badData = [1, 2, 3, 4];
-    const testFn = () => smoothingSpline(badData);
-    expect(testFn).toThrowError(
-      `Invalid data object. data must be an array of points {x, y}.`
-    );
   });
 });

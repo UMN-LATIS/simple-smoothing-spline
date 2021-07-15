@@ -1,4 +1,6 @@
-import Plotly from "plotly.js-dist";
+/* global: Plotly */
+
+// import Plotly from "plotly.js-dist";
 
 /**
  * Track previous renders so that we can use

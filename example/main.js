@@ -1,5 +1,5 @@
 import store from "./store/store.js";
-import smoothingSpline from "../index.js";
+import smoothingSpline from "../dist/index.mjs";
 import plot from "./helpers/plot.js";
 import getAllData from "./helpers/getAllData.js";
 import handleInputChange from "./helpers/handleInputChange.js";

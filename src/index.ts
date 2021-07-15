@@ -1,23 +1,35 @@
-import { matrix, transpose, identity, multiply, add, inv } from "mathjs";
+import {
+  matrix,
+  transpose,
+  identity,
+  multiply,
+  add,
+  inv,
+  Matrix,
+} from "mathjs";
 
 class InvalidLambdaError extends Error {}
-class InvalidDataObject extends Error {}
+
+interface Point {
+  x: number;
+  y: number;
+}
 
 // Positive or 0. Needed in basis functions
-const pos = (val) => Math.max(val, 0);
+const pos = (val: number): number => Math.max(val, 0);
 
 // given collection of {x, y} points, get all x values
-const getAllXs = (pts) => pts.map((pt) => pt.x);
+const getAllXs = (pts: Point[]): number[] => pts.map((pt) => pt.x);
 
 // given collection of {x, y} points, get all y values
-const getAllYs = (pts) => pts.map((pt) => pt.y);
+const getAllYs = (pts: Point[]): number[] => pts.map((pt) => pt.y);
 
 /**
  * creates a matrix, X, of basis functions
  * using x values from our data set.
  * We'll need this when solving for betas.
  */
-function createBasisMatrix(data) {
+function createBasisMatrix(data: Point[]) {
   const X = [];
 
   for (let i = 0; i < data.length; i++) {
@@ -39,7 +51,7 @@ function createBasisMatrix(data) {
  * wrapper for matrix multiply that can handle
  * more than 2 arguments
  */
-function mult(firstMatrix, ...matrices) {
+function mult(firstMatrix: Matrix, ...matrices: Matrix[]): Matrix {
   return matrices.reduce(
     (runningProduct, matrix) => multiply(runningProduct, matrix),
     firstMatrix
@@ -63,7 +75,7 @@ function mult(firstMatrix, ...matrices) {
  *
  * See: https://online.stat.psu.edu/stat857/node/155/
  */
-function solveForBetas(data, lambda) {
+function solveForBetas(data: Point[], lambda: number) {
   const X = createBasisMatrix(data);
   const y = transpose(matrix(getAllYs(data)));
   const Xtrans = transpose(X);
@@ -73,7 +85,7 @@ function solveForBetas(data, lambda) {
   const inner = add(
     multiply(Xtrans, X),
     multiply(lambda, identity(numOfColsOfX))
-  );
+  ) as Matrix;
 
   const invInner = inv(inner);
   const betas = mult(invInner, Xtrans, y);
@@ -86,13 +98,13 @@ function solveForBetas(data, lambda) {
  * To be used to beta coefficients to generate
  * the full spline
  */
-function createBasisColVector(x, allXs) {
+function createBasisColVector(x: number, allXs: number[]): Matrix {
   return transpose(
     matrix([1, x, x ** 2, x ** 3, ...allXs.map((x_k) => pos(x - x_k) ** 3)])
   );
 }
 
-function generateSplinePoints(spline, data) {
+function generateSplinePoints(splineFn: (x: number) => number, data: Point[]) {
   const splinePoints = [];
 
   const minX = Math.min(...getAllXs(data));
@@ -100,28 +112,14 @@ function generateSplinePoints(spline, data) {
   const stepSize = (maxX - minX) / 1000;
 
   for (let i = minX; i <= maxX; i += stepSize) {
-    splinePoints.push({ x: i, y: spline(i) });
+    splinePoints.push({ x: i, y: splineFn(i) });
   }
   return splinePoints;
 }
 
-function isDataValid(data) {
-  const checks = [
-    (data) => data instanceof Array,
-    (data) =>
-      data.every((pt) => pt.hasOwnProperty("x") && pt.hasOwnProperty("y")),
-  ];
-  return checks.every((check) => check(data));
-}
-
-export default function smoothingSpline(data, { lambda = 1000 } = {}) {
+export default function smoothingSpline(data: Point[], { lambda = 1000 } = {}) {
   if (lambda <= 0) {
     throw new InvalidLambdaError("lambda must be greater than 0");
-  }
-  if (!isDataValid(data)) {
-    throw new InvalidDataObject(
-      "Invalid data object. data must be an array of points {x, y}."
-    );
   }
 
   // the coefficients of our spline
@@ -137,11 +135,13 @@ export default function smoothingSpline(data, { lambda = 1000 } = {}) {
   //
   // Or in matrix form:
   // f(x) = βvector * transpose([1 x x^2 x^3 ...])
-  const splineFn = (x) =>
-    multiply(
+  const splineFn = (x: number): number => {
+    const result = multiply(
       betas, // row
       createBasisColVector(x, getAllXs(data))
     );
+    return result.get([0, 0]);
+  };
 
   const splinePoints = generateSplinePoints(splineFn, data);
 
