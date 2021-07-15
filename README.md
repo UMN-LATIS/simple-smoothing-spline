@@ -33,11 +33,19 @@ Example:
 
 ## Installation
 
+### Using NPM or Yarn
+
 ```console
 npm install simple-smoothing-spline
 ```
 
-or use it directly as a script tag, added before your main script
+```console
+yarn add simple-smoothing-spline
+```
+
+### With a `<script>` tag
+
+Added this **before** your main script:
 
 ```html
 <!-- index.html -->
@@ -45,14 +53,10 @@ or use it directly as a script tag, added before your main script
   src="https://unpkg.com/simple-smoothing-spline/dist/index.umd.min.js"
   async
 ></script>
-<script src="./main.js" type="module"></script>
 ```
 
-Then, in your script, you can call a global `simpleSmoothingSpline ()` function.
+Then, in your scripts, you can call a global `simpleSmoothingSpline ()` function.
 
-```js
-const spline = simpleSmoothingSpline(data, { lambda: 1000 });
-```
 ## API
 
 ### `simpleSmoothingSpline(data, opts)`
