@@ -26,7 +26,7 @@
     "analysis"
   ],
   "scripts": {
-    "start": "snowpack dev",
+    "dev": "concurrently \"tsc -w\" \"npm run bundle -- -w\"",
     "prepublishOnly": "npm run build",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "npm run test -- --watch",
@@ -45,6 +45,7 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.3.2",
+    "concurrently": "^6.2.0",
     "d3": "^7.0.0",
     "eslint": "^7.30.0",
     "jest": "^27.0.6",

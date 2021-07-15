@@ -6,6 +6,7 @@ import {
   add,
   inv,
   Matrix,
+  index,
 } from "mathjs";
 
 class InvalidLambdaError extends Error {}
@@ -140,7 +141,9 @@ export default function smoothingSpline(data: Point[], { lambda = 1000 } = {}) {
       betas, // row
       createBasisColVector(x, getAllXs(data))
     );
-    return result.get([0, 0]);
+
+    // there is probably a better way to do this without typescript complaining
+    return result as unknown as number;
   };
 
   const splinePoints = generateSplinePoints(splineFn, data);
