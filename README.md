@@ -84,7 +84,7 @@ An example using Plotly JS can be found at <https://umn-latis.github.io/simple-s
 
 - [Background notes and references](./NOTES.md)
 - [Maintainers](.github/CODEOWNERS)
-- [Contributors](https://github.com/UMN-LATIS/simple-smoothing-spline)
+- [Contributors](https://github.com/UMN-LATIS/simple-smoothing-spline/graphs/contributors)
 
 ## License
 
