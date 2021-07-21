@@ -1,5 +1,6 @@
 import { expect } from "@jest/globals";
 import smoothingSpline from "./index";
+import moarData from "./fixtures/moarData";
 
 const data = [
   { x: 1, y: 0.5 },
@@ -32,5 +33,22 @@ describe("simple-smoothing-spline", () => {
   it("throws an error unless lambda is positive", () => {
     const testFn = () => smoothingSpline(data, { lambda: 0 });
     expect(testFn).toThrowError("lambda must be greater than 0");
+  });
+
+  it("should be performant", () => {
+    const expectedMSperPoint = 1;
+
+    for (let i = 50; i < moarData.length; i += 50) {
+      const dataSet = moarData.slice(0, i);
+      const start = Date.now();
+      smoothingSpline(dataSet);
+      const end = Date.now();
+      const runtime = end - start;
+      console.log({
+        items: dataSet.length,
+        runtime,
+      });
+      expect(runtime).toBeLessThan(expectedMSperPoint * dataSet.length);
+    }
   });
 });

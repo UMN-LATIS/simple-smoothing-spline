@@ -3,7 +3,7 @@ import createMatrix from "./createMatrix";
 
 class InvalidLambdaError extends Error {}
 
-interface Point {
+export interface Point {
   x: number;
   y: number;
 }
