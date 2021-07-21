@@ -1,5 +1,6 @@
 import { matrix, transpose, multiply, add, inv, Matrix } from "mathjs";
 import createMatrix from "./createMatrix";
+import timeit from "./timeit";
 
 class InvalidLambdaError extends Error {}
 
@@ -69,27 +70,32 @@ function mult(firstMatrix: Matrix, ...matrices: Matrix[]): Matrix {
  * See: https://online.stat.psu.edu/stat857/node/155/
  */
 function solveForBetas(data: Point[], lambda: number) {
-  const X = createBasisMatrix(data);
-  const y = transpose(matrix(getAllYs(data)));
-  const Xtrans = transpose(X);
-  const numOfColsOfX = X.size()[1];
+  const X = timeit("createBasisMatrix")(createBasisMatrix(data));
+  const y = timeit("y")(transpose(matrix(getAllYs(data))));
+  const Xtrans = timeit("Xtrans")(transpose(X));
+  const numOfColsOfX = timeit("numOfColsOfX")(X.size()[1]);
 
   // λ*I
   // But set first diagonal to zero so as not to include a bias term
   // for the intercept
+  timeit.start("λI");
   const λI = createMatrix(numOfColsOfX, numOfColsOfX, (i, j) =>
     i === j && i > 0 ? lambda : 0
   );
+  timeit.stop("λI");
 
   // transpose(M) * M + λ*I
+  timeit.start("inner");
   const inner = add(
-    multiply(Xtrans, X),
+    timeit("mult")(multiply(Xtrans, X)),
     λI
     // multiply(lambda, identity(numOfColsOfX))
   ) as Matrix;
+  timeit.stop("inner");
 
-  const invInner = inv(inner);
-  const betas = mult(invInner, Xtrans, y);
+  const invInner = timeit("invInner")(inv(inner));
+
+  const betas = timeit("betas")(mult(invInner, Xtrans, y));
   return betas;
 }
 
@@ -119,13 +125,13 @@ function generateSplinePoints(splineFn: (x: number) => number, data: Point[]) {
 }
 
 export default function smoothingSpline(data: Point[], { lambda = 1000 } = {}) {
+  timeit.start("smoothingSpline");
   if (lambda <= 0) {
     throw new InvalidLambdaError("lambda must be greater than 0");
   }
 
   // the coefficients of our spline
-  const betas = solveForBetas(data, lambda);
-  // console.log({ betas });
+  const betas = timeit("solveForBetas")(solveForBetas(data, lambda));
 
   // the function that can generate a spline's y
   // from a given x.
@@ -148,7 +154,7 @@ export default function smoothingSpline(data: Point[], { lambda = 1000 } = {}) {
   };
 
   const splinePoints = generateSplinePoints(splineFn, data);
-
+  timeit.stop("smoothingSpline");
   return {
     fn: splineFn,
     points: splinePoints,

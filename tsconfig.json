@@ -9,8 +9,9 @@
     "strict": true,
     "target": "es6",
     "outDir": "./dist",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["dist", "node_modules", "src/**/*.test.ts"]
+  "exclude": ["dist", "node_modules", "src/**/*.test.ts", "types"]
 }
