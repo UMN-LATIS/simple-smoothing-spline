@@ -1,4 +1,4 @@
-import createMatrix from "../src/createMatrix";
+import createMatrix from "./createMatrix";
 
 describe("createMatrix", () => {
   it("creates a matrix of rows, cols using a given function", () => {

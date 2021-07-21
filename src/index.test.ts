@@ -1,5 +1,5 @@
 import { expect } from "@jest/globals";
-import smoothingSpline from "../src/index";
+import smoothingSpline from "./index";
 
 const data = [
   { x: 1, y: 0.5 },

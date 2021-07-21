@@ -119,8 +119,6 @@ function generateSplinePoints(splineFn: (x: number) => number, data: Point[]) {
 }
 
 export default function smoothingSpline(data: Point[], { lambda = 1000 } = {}) {
-  console.log("calling smoothingSpline");
-
   if (lambda <= 0) {
     throw new InvalidLambdaError("lambda must be greater than 0");
   }
