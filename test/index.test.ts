@@ -25,8 +25,8 @@ describe("simple-smoothing-spline", () => {
 
   it("takes an optional lambda parameter", () => {
     const spline = smoothingSpline(data, { lambda: 1 });
-    expect(spline.fn(2)).toMatchInlineSnapshot(`3.9309522146973404`);
-    expect(spline.fn(3)).toMatchInlineSnapshot(`9.74752733088028`);
+    expect(spline.fn(2)).toMatchInlineSnapshot(`3.9286530789717804`);
+    expect(spline.fn(3)).toMatchInlineSnapshot(`9.746784076269396`);
   });
 
   it("throws an error unless lambda is positive", () => {

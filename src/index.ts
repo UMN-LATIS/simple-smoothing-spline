@@ -1,13 +1,5 @@
-import {
-  matrix,
-  transpose,
-  identity,
-  multiply,
-  add,
-  inv,
-  Matrix,
-  index,
-} from "mathjs";
+import { matrix, transpose, multiply, add, inv, Matrix } from "mathjs";
+import createMatrix from "./createMatrix";
 
 class InvalidLambdaError extends Error {}
 
@@ -82,10 +74,18 @@ function solveForBetas(data: Point[], lambda: number) {
   const Xtrans = transpose(X);
   const numOfColsOfX = X.size()[1];
 
+  // λ*I
+  // But set first diagonal to zero so as not to include a bias term
+  // for the intercept
+  const λI = createMatrix(numOfColsOfX, numOfColsOfX, (i, j) =>
+    i === j && i > 0 ? lambda : 0
+  );
+
   // transpose(M) * M + λ*I
   const inner = add(
     multiply(Xtrans, X),
-    multiply(lambda, identity(numOfColsOfX))
+    λI
+    // multiply(lambda, identity(numOfColsOfX))
   ) as Matrix;
 
   const invInner = inv(inner);
@@ -119,12 +119,15 @@ function generateSplinePoints(splineFn: (x: number) => number, data: Point[]) {
 }
 
 export default function smoothingSpline(data: Point[], { lambda = 1000 } = {}) {
+  console.log("calling smoothingSpline");
+
   if (lambda <= 0) {
     throw new InvalidLambdaError("lambda must be greater than 0");
   }
 
   // the coefficients of our spline
   const betas = solveForBetas(data, lambda);
+  // console.log({ betas });
 
   // the function that can generate a spline's y
   // from a given x.
