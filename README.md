@@ -3,6 +3,7 @@
 > Fit a smoothing spline to collection of data points
 
 [![Screenshot of Simple Smoothing Spline Demo](public/simple-smoothing-spline-screenshot.png)](https://umn-latis.github.io/simple-smoothing-spline)
+
 ## Usage
 
 ```js
@@ -62,6 +63,13 @@ Parameters:
 
 - `data` - an array of data points in the form of `{x: 1, y: 2}`.
 - `opts.lambda = 1000` - lambda parameter for Ridge regression. This is the tuning parameter for the regression function. The higher the lambda, the smoother the spline will be. By default, this is 1000.
+- `opts.type = smooth (default) | cubic` - type of spline to use for regression.
+
+  Example:
+
+  ```js
+  const cubicSpline = simpleSmoothingSpline(data, { type: "cubic" });
+  ```
 
 Returns:
 
