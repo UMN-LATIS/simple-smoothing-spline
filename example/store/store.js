@@ -1,5 +1,5 @@
 import { CCS, SpR } from "../data/data.js";
-import simple from "../data/simple";
+// import simple from "../data/simple";
 import { createStore } from "./createStore.js";
 
 export const INPUT_CHANGE = "INPUT_CHANGE";
