@@ -8,11 +8,11 @@ export const INPUT_CHANGE = "INPUT_CHANGE";
 // we load in two data sets and set a default lambda
 let initialState = {
   data: {
-    // CCS,
-    // SpR,
-    simple,
+    CCS,
+    SpR,
+    // simple,
   },
-  lambda: 1000,
+  lambda: 1,
 };
 
 // this function processes any actions from the UI

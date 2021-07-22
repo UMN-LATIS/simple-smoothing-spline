@@ -61,9 +61,10 @@ describe("simple-smoothing-spline", () => {
 // });
 
 describe("old v new", () => {
-  it("createBasisMatrix", () => {
+  it.only("createBasisMatrix", () => {
     const oldM = oldCreateBasisMatrix(data);
     const newM = createBasisMatrix(data);
+    console.log(JSON.stringify({ oldM, newM }), null, 2);
     expect(oldM).toEqual(newM);
   });
 });

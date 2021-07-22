@@ -29,9 +29,6 @@ export const createBasisCol = (x: number, data: Point[]): Matrix =>
  * We'll need this when solving for betas.
  */
 export const createBasisMatrix = (data: Point[]): Matrix => {
-  const X = [];
-  for (let i = 0; i < data.length; i++) {
-    X.push(createBasisArray(i, data));
-  }
+  const X = getAllXs(data).map((x) => createBasisArray(x, data));
   return matrix(X);
 };

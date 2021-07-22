@@ -1,6 +1,7 @@
 // Comment this next line out if using simpleSmoothingSpline
 // from a CDN. See the index.html file.
 import simpleSmoothingSpline from "./src/index.ts";
+import oldSimpleSmoothingSpline from "./src/index-old.ts";
 import store from "./store/store.js";
 import plot from "./helpers/plot.js";
 import getAllData from "./helpers/getAllData.js";
@@ -18,9 +19,18 @@ function render(state) {
   // get points for the spline
   const data = getAllData(state);
   const spline = simpleSmoothingSpline(data, { lambda: state.lambda });
+  console.log({ spline });
+  const oldSpline = oldSimpleSmoothingSpline(data, { lambda: state.lambda });
 
   // render plot with data and smoothing spline points
-  plot({ ...state.data, "smoothing spline": spline.points }, PLOT_ID);
+  plot(
+    {
+      ...state.data,
+      "smoothing spline": spline.points,
+      // "old smoothing spline": oldSpline.points,
+    },
+    PLOT_ID
+  );
 }
 
 // wait until the page is loaded, then...
