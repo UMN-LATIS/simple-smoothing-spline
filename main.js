@@ -15,10 +15,18 @@ function render(state) {
 
   // get points for the spline
   const data = getAllData(state);
-  const spline = simpleSmoothingSpline(data, { lambda: state.lambda });
+  const smoothSpline = simpleSmoothingSpline(data, { lambda: state.lambda });
+  const cubicSpline = simpleSmoothingSpline(data, { type: "cubic" });
 
   // render plot with data and smoothing spline points
-  plot({ ...state.data, "smoothing spline": spline.points }, PLOT_ID);
+  plot(
+    {
+      ...state.data,
+      "smooth spline": smoothSpline.points,
+      "cubic spline": cubicSpline.points,
+    },
+    PLOT_ID
+  );
 }
 
 // wait until the page is loaded, then...
