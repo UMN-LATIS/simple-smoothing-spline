@@ -1,5 +1,5 @@
 import { multiply } from "mathjs";
-import { Point } from "../types";
+import { Point, SplineFunction } from "../types";
 import { createBasisCol } from "./createBasis";
 import solveForBetas from "./solveForBeta";
 
@@ -8,7 +8,7 @@ class InvalidLambdaError extends Error {}
 export default function generateSmoothingSplineFunction(
   data: Point[],
   { lambda }: { lambda: number }
-) {
+): SplineFunction {
   if (lambda <= 0) {
     throw new InvalidLambdaError("lambda must be greater than 0");
   }
