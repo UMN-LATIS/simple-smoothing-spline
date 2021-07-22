@@ -49,3 +49,12 @@ describe("simple-smoothing-spline", () => {
     // }
   });
 });
+
+describe("natural spline", () => {
+  // to begin assume a cubic spline that's a best fit
+  // for the data set
+  it("fits a cubic spline with no knots", () => {
+    const spline = smoothingSpline(data, { type: "cubic" });
+    expect(spline.points).toMatchSnapshot();
+  });
+});
