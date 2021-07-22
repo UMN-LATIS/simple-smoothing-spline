@@ -1,9 +1,9 @@
 import generateSmoothingSplineFunction from "./smoothingSpline/generateSmoothingSplineFunction";
 import generateCubicSplineFunction from "./cubicSpline/generateCubicSplineFunction";
 import getAllXs from "./helpers/getAllXs";
-import { Point } from "./types";
+import { Point, SplineFunction } from "./types";
 
-function generateSplinePoints(splineFn: (x: number) => number, data: Point[]) {
+function generateSplinePoints(splineFn: SplineFunction, data: Point[]) {
   const splinePoints = [];
 
   const minX = Math.min(...getAllXs(data));

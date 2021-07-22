@@ -1,4 +1,5 @@
 import { CCS, SpR } from "../data/data.js";
+import simple from "../data/simple";
 import { createStore } from "./createStore.js";
 
 export const INPUT_CHANGE = "INPUT_CHANGE";
@@ -7,8 +8,9 @@ export const INPUT_CHANGE = "INPUT_CHANGE";
 // we load in two data sets and set a default lambda
 let initialState = {
   data: {
-    CCS,
-    SpR,
+    // CCS,
+    // SpR,
+    simple,
   },
   lambda: 1000,
 };

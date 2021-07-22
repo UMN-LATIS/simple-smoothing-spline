@@ -26,8 +26,8 @@
     "analysis"
   ],
   "scripts": {
-    "start": "npm run build && cp -r dist example && serve example",
-    "dev": "concurrently \"tsc -w\" \"npm run bundle -- -w\"",
+    "start": "snowpack dev",
+    "dev": "snowpack dev",
     "prepublishOnly": "npm run build",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "npm run test -- --watch",

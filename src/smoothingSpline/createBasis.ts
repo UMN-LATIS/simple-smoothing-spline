@@ -11,8 +11,8 @@ const createBasisArray = (x: number, data: Point[]): number[] => [
   ...getAllXs(data).map((x_k) => pos(x - x_k) ** 3),
 ];
 
-const createBasisRow = (x: number, data: Point[]) =>
-  matrix(createBasisArray(x, data));
+// const createBasisRow = (x: number, data: Point[]) =>
+//   matrix(createBasisArray(x, data));
 
 /**
  * creates a column vector of the spline
@@ -21,7 +21,7 @@ const createBasisRow = (x: number, data: Point[]) =>
  * the full spline
  */
 export const createBasisCol = (x: number, data: Point[]): Matrix =>
-  transpose(createBasisRow(x, data));
+  transpose(matrix(createBasisArray(x, data)));
 
 /**
  * creates a matrix, X, of basis functions

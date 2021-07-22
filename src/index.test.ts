@@ -1,5 +1,9 @@
 import { expect } from "@jest/globals";
 import smoothingSpline from "./index";
+import oldSmoothingSpline, {
+  createBasisMatrix as oldCreateBasisMatrix,
+} from "../src/index-old";
+import { createBasisMatrix } from "../src/smoothingSpline/createBasis";
 import moarData from "./fixtures/moarData";
 
 const data = [
@@ -35,23 +39,31 @@ describe("simple-smoothing-spline", () => {
     expect(testFn).toThrowError("lambda must be greater than 0");
   });
 
-  // it("should be performant", () => {
-  //   const expectedMSperPoint = 3;
-  //   const dataSet = moarData.slice(0, 100);
-  //   const start = Date.now();
-  //   smoothingSpline(dataSet);
-  //   const end = Date.now();
-  //   const runtime = end - start;
+  it.skip("should be performant", () => {
+    const expectedMSperPoint = 3;
+    const dataSet = moarData.slice(0, 100);
+    const start = Date.now();
+    smoothingSpline(dataSet);
+    const end = Date.now();
+    const runtime = end - start;
 
-  //   expect(runtime).toBeLessThan(expectedMSperPoint * dataSet.length);
-  // });
+    expect(runtime).toBeLessThan(expectedMSperPoint * dataSet.length);
+  });
 });
 
-describe("natural spline", () => {
-  // to begin assume a cubic spline that's a best fit
-  // for the data set
-  it("fits a cubic spline with no knots", () => {
-    const spline = smoothingSpline(data, { type: "cubic" });
-    expect(spline.points).toMatchSnapshot();
+// describe("natural spline", () => {
+//   // to begin assume a cubic spline that's a best fit
+//   // for the data set
+//   it("fits a cubic spline with no knots", () => {
+//     const spline = smoothingSpline(data, { type: "cubic" });
+//     expect(spline.points).toMatchSnapshot();
+//   });
+// });
+
+describe("old v new", () => {
+  it("createBasisMatrix", () => {
+    const oldM = oldCreateBasisMatrix(data);
+    const newM = createBasisMatrix(data);
+    expect(oldM).toEqual(newM);
   });
 });
