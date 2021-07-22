@@ -1,9 +1,5 @@
 import { expect } from "@jest/globals";
 import smoothingSpline from "./index";
-import oldSmoothingSpline, {
-  createBasisMatrix as oldCreateBasisMatrix,
-} from "../src/index-old";
-import { createBasisMatrix } from "../src/smoothingSpline/createBasis";
 import moarData from "./fixtures/moarData";
 
 const data = [
@@ -30,8 +26,8 @@ describe("simple-smoothing-spline", () => {
 
   it("takes an optional lambda parameter", () => {
     const spline = smoothingSpline(data, { lambda: 1 });
-    expect(spline.fn(2)).toMatchInlineSnapshot(`3.9286530789717804`);
-    expect(spline.fn(3)).toMatchInlineSnapshot(`9.746784076269396`);
+    expect(spline.fn(2)).toMatchInlineSnapshot(`3.9309522146973404`);
+    expect(spline.fn(3)).toMatchInlineSnapshot(`9.74752733088028`);
   });
 
   it("throws an error unless lambda is positive", () => {
@@ -59,12 +55,3 @@ describe("simple-smoothing-spline", () => {
 //     expect(spline.points).toMatchSnapshot();
 //   });
 // });
-
-describe("old v new", () => {
-  it.only("createBasisMatrix", () => {
-    const oldM = oldCreateBasisMatrix(data);
-    const newM = createBasisMatrix(data);
-    console.log(JSON.stringify({ oldM, newM }), null, 2);
-    expect(oldM).toEqual(newM);
-  });
-});

@@ -8,7 +8,6 @@ import {
   identity,
 } from "mathjs";
 import { createBasisMatrix } from "./createBasis";
-import createMatrix from "../helpers/createMatrix";
 import getAllYs from "../helpers/getAllYs";
 import { Point } from "../types";
 
@@ -36,12 +35,6 @@ export default function solveForBetas(data: Point[], lambda: number) {
   const numOfColsOfX = X.size()[1];
 
   // λ*I
-  // But set first diagonal to zero so as not to include a bias term
-  // for the intercept
-  // const λI = createMatrix(numOfColsOfX, numOfColsOfX, (i, j) =>
-  //   i === j && i > 0 ? lambda : 0
-  // );
-
   const λI = multiply(lambda, identity(numOfColsOfX));
 
   // transpose(M) * M + λ*I
