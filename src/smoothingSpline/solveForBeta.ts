@@ -1,4 +1,12 @@
-import { transpose, matrix, add, multiply, inv, Matrix } from "mathjs";
+import {
+  transpose,
+  matrix,
+  add,
+  multiply,
+  inv,
+  Matrix,
+  identity,
+} from "mathjs";
 import { createBasisMatrix } from "./createBasis";
 import createMatrix from "../helpers/createMatrix";
 import getAllYs from "../helpers/getAllYs";
@@ -30,9 +38,11 @@ export default function solveForBetas(data: Point[], lambda: number) {
   // λ*I
   // But set first diagonal to zero so as not to include a bias term
   // for the intercept
-  const λI = createMatrix(numOfColsOfX, numOfColsOfX, (i, j) =>
-    i === j && i > 0 ? lambda : 0
-  );
+  // const λI = createMatrix(numOfColsOfX, numOfColsOfX, (i, j) =>
+  //   i === j && i > 0 ? lambda : 0
+  // );
+
+  const λI = multiply(lambda, identity(numOfColsOfX));
 
   // transpose(M) * M + λ*I
   const inner = add(multiply(Xtrans, X), λI) as Matrix;

@@ -3,7 +3,7 @@ import generateCubicSplineFunction from "./cubicSpline/generateCubicSplineFuncti
 import getAllXs from "./helpers/getAllXs";
 import { Point, SplineFunction } from "./types";
 
-function generateSplinePoints(splineFn: SplineFunction, data: Point[]) {
+function generateSplinePoints(splineFn: (x: number) => number, data: Point[]) {
   const splinePoints = [];
 
   const minX = Math.min(...getAllXs(data));

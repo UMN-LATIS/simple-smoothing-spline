@@ -2,6 +2,7 @@
 // from a CDN. See the index.html file.
 import simpleSmoothingSpline from "./src/index.ts";
 import oldSimpleSmoothingSpline from "./src/index-old.ts";
+import mainSimpleSmoothingSpline from "./src/index-main.ts";
 import store from "./store/store.js";
 import plot from "./helpers/plot.js";
 import getAllData from "./helpers/getAllData.js";
@@ -21,13 +22,15 @@ function render(state) {
   const spline = simpleSmoothingSpline(data, { lambda: state.lambda });
   console.log({ spline });
   const oldSpline = oldSimpleSmoothingSpline(data, { lambda: state.lambda });
+  const mainSpline = mainSimpleSmoothingSpline(data, { lambda: state.lambda });
 
   // render plot with data and smoothing spline points
   plot(
     {
       ...state.data,
-      "smoothing spline": spline.points,
-      // "old smoothing spline": oldSpline.points,
+      "current spline": spline.points,
+      // "old spline": oldSpline.points,
+      "main spline": mainSpline.points,
     },
     PLOT_ID
   );
