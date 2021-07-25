@@ -25,7 +25,7 @@ export default function smoothingSpline(
   data: Point[],
   { lambda = 1000, type = "smoothing" }: smoothingSplineOptions = {}
 ) {
-  let splineFn: (x: number) => number;
+  let splineFn: SplineFunction;
 
   if (type === "cubic") {
     splineFn = generateCubicSplineFunction(data);
