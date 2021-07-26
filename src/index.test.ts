@@ -1,6 +1,7 @@
 import { expect } from "@jest/globals";
 import smoothingSpline from "./index";
 import moarData from "./fixtures/moarData";
+import timeit from "./helpers/timeit";
 
 const data = [
   { x: 1, y: 0.5 },
@@ -35,14 +36,13 @@ describe("simple-smoothing-spline", () => {
     expect(testFn).toThrowError("lambda must be greater than 0");
   });
 
-  it.skip("should be performant", () => {
-    const expectedMSperPoint = 3;
+  it("should be performant", () => {
+    const expectedMSperPoint = 1;
     const dataSet = moarData.slice(0, 100);
-    const start = Date.now();
-    smoothingSpline(dataSet);
-    const end = Date.now();
-    const runtime = end - start;
 
+    timeit.start("smoothingSpline");
+    smoothingSpline(dataSet);
+    const runtime = timeit.stop("smoothingSpline");
     expect(runtime).toBeLessThan(expectedMSperPoint * dataSet.length);
   });
 });
