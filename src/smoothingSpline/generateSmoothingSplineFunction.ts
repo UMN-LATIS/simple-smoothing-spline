@@ -1,4 +1,3 @@
-import { multiply } from "mathjs";
 import { Point, SplineFunction } from "../types";
 import { createBasisCol } from "./createBasis";
 import solveForBetas from "./solveForBeta";
@@ -27,10 +26,7 @@ export default function generateSmoothingSplineFunction(
   // f(x) = βvector * transpose([1 x x^2 x^3 ...])
   const splineFn = (x: number): number => {
     // there is probably a better way to do this without typescript complaining
-    return multiply(
-      betas, // row
-      createBasisCol(x, data)
-    ) as unknown as number;
+    return betas.multiply(createBasisCol(x, data)).get(0, 0);
   };
 
   return splineFn;

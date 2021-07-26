@@ -1,9 +1,10 @@
 import { Point } from "../types";
 import getAllXs from "../helpers/getAllXs";
 import pos from "../helpers/pos";
-import { Matrix, matrix, transpose } from "mathjs";
+// import { Matrix, matrix, transpose } from "mathjs";
+import Matrix from "../matrix/matrix";
 
-const createBasisArray = (x: number, data: Point[]): number[] => [
+export const createBasisArray = (x: number, data: Point[]): number[] => [
   1,
   x,
   x ** 2,
@@ -21,7 +22,7 @@ const createBasisArray = (x: number, data: Point[]): number[] => [
  * the full spline
  */
 export const createBasisCol = (x: number, data: Point[]): Matrix =>
-  transpose(matrix(createBasisArray(x, data)));
+  new Matrix([createBasisArray(x, data)]).transpose();
 
 /**
  * creates a matrix, X, of basis functions
@@ -30,5 +31,5 @@ export const createBasisCol = (x: number, data: Point[]): Matrix =>
  */
 export const createBasisMatrix = (data: Point[]): Matrix => {
   const X = getAllXs(data).map((x) => createBasisArray(x, data));
-  return matrix(X);
+  return new Matrix(X);
 };

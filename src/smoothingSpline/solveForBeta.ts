@@ -1,12 +1,14 @@
-import {
-  transpose,
-  matrix,
-  add,
-  multiply,
-  inv,
-  Matrix,
-  identity,
-} from "mathjs";
+// import {
+//   transpose,
+//   matrix,
+//   add,
+//   multiply,
+//   inv,
+//   Matrix,
+//   identity,
+// } from "mathjs";
+
+import Matrix from "../matrix/matrix";
 import { createBasisMatrix } from "./createBasis";
 import getAllYs from "../helpers/getAllYs";
 import { Point } from "../types";
@@ -30,18 +32,17 @@ import { Point } from "../types";
  */
 export default function solveForBetas(data: Point[], lambda: number) {
   const X = createBasisMatrix(data);
-  const y = transpose(matrix(getAllYs(data)));
-  const Xtrans = transpose(X);
-  const numOfColsOfX = X.size()[1];
+  const y = new Matrix([getAllYs(data)]).transpose();
+  const Xtrans = X.transpose();
 
   // λ*I
-  const λI = multiply(lambda, identity(numOfColsOfX));
+  const λI = Matrix.identity(X.cols).multiplyScalar(lambda);
 
   // transpose(M) * M + λ*I
-  const inner = add(multiply(Xtrans, X), λI) as Matrix;
+  const inner = Xtrans.multiply(X).add(λI) as Matrix;
 
-  const invInner = inv(inner);
+  // const invInner = inner.inverse();
 
-  const betas = multiply(multiply(invInner, Xtrans), y);
+  const betas = inner.inverse().multiply(Xtrans).multiply(y);
   return betas;
 }
