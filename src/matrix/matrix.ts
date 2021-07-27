@@ -22,8 +22,11 @@ export default class Matrix implements MatrixLike {
     return new Matrix(new MLMatrix(rows, cols));
   }
 
-  static identity(size: number): Matrix {
-    const identity = MLMatrix.identity(size);
+  static identity(
+    size: number,
+    { scalar = 1 }: { scalar?: number } = {}
+  ): Matrix {
+    const identity = MLMatrix.identity(size, size, scalar);
     return new Matrix(identity);
   }
 

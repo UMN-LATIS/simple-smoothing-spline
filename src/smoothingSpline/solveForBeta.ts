@@ -36,7 +36,7 @@ export default function solveForBetas(data: Point[], lambda: number) {
   const Xtrans = X.transpose();
 
   // λ*I
-  const λI = Matrix.identity(X.cols).multiplyScalar(lambda);
+  const λI = Matrix.identity(X.cols, { scalar: lambda });
 
   // transpose(M) * M + λ*I
   const inner = Xtrans.multiply(X).add(λI) as Matrix;

@@ -150,6 +150,17 @@ describe("Matrix", () => {
         [0, 0, 1],
       ]);
     });
+    it("can include an optional scalar", () => {
+      const scalar = 2;
+      const m = Matrix.identity(3, { scalar });
+      expect(m.rows).toBe(3);
+      expect(m.cols).toBe(3);
+      expect(m.toArray()).toEqual([
+        [scalar, 0, 0],
+        [0, scalar, 0],
+        [0, 0, scalar],
+      ]);
+    });
   });
 
   describe("determinant", () => {
