@@ -2,37 +2,41 @@ import { expect } from "@jest/globals";
 import smoothingSpline from "./index";
 import moarData from "./fixtures/moarData";
 import timeit from "./helpers/timeit";
+import { Point } from "./types";
 
-const data = [
-  { x: 1, y: 0.5 },
-  { x: 2, y: 3 },
-  { x: 3, y: 8.5 },
-  { x: 4, y: 20 },
-  { x: 1, y: 1 },
-  { x: 2, y: 5 },
-  { x: 3, y: 11 },
-  { x: 4, y: 15 },
-];
+const range = (start: number, end: number) =>
+  [...Array(end - start).keys()].map((i) => start + i);
+const cubic = (x: number): number => 5 - 2 * x + 3 * x ** 2 - x ** 3;
+const dataWithSomeNoise: Point[] = range(0, 10).map((x) => ({
+  x,
+  // using sin(x) for a little noise
+  y: cubic(x) + 0.1 * Math.sin(x),
+}));
 
 describe("simple-smoothing-spline", () => {
   it("creates spline points with given data", () => {
-    const spline = smoothingSpline(data);
-    expect(spline.points).toMatchSnapshot();
+    const { points } = smoothingSpline(dataWithSomeNoise, { lambda: 0.0001 });
+    expect(points.length).toBe(1000);
+    // expect our points are close to the real ones
+    // with a small lambda
+    points.forEach(({ x, y }) => {
+      expect(y).toBeCloseTo(cubic(x), 0.1);
+    });
   });
 
   it("makes a spline function that gives a y for a given x", () => {
-    const spline = smoothingSpline(data);
+    const spline = smoothingSpline(dataWithSomeNoise);
     spline.points.forEach(({ x, y }) => expect(spline.fn(x)).toBe(y));
   });
 
   it("takes an optional lambda parameter", () => {
-    const spline = smoothingSpline(data, { lambda: 1 });
-    expect(spline.fn(2)).toMatchInlineSnapshot(`3.9309522146973404`);
-    expect(spline.fn(3)).toMatchInlineSnapshot(`9.74752733088028`);
+    const spline = smoothingSpline(dataWithSomeNoise, { lambda: 1 });
+    expect(spline.fn(2)).toMatchInlineSnapshot(`4.8245402615185`);
+    expect(spline.fn(3)).toMatchInlineSnapshot(`-0.9603383102300911`);
   });
 
   it("throws an error unless lambda is positive", () => {
-    const testFn = () => smoothingSpline(data, { lambda: 0 });
+    const testFn = () => smoothingSpline(dataWithSomeNoise, { lambda: 0 });
     expect(testFn).toThrowError("lambda must be greater than 0");
   });
 

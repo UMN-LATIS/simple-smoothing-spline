@@ -26,7 +26,7 @@ export default function generateSmoothingSplineFunction(
   // f(x) = βvector * transpose([1 x x^2 x^3 ...])
   const splineFn = (x: number): number => {
     // there is probably a better way to do this without typescript complaining
-    return betas.multiply(createBasisCol(x, data)).get(0, 0);
+    return betas.transpose().multiply(createBasisCol(x, data)).get(0, 0);
   };
 
   return splineFn;
