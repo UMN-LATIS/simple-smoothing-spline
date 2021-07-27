@@ -1,4 +1,5 @@
-import Matrix from "./matrix";
+// test against whatever the default library is in index
+import Matrix from "./index";
 
 describe("Matrix", () => {
   describe("constructor", () => {

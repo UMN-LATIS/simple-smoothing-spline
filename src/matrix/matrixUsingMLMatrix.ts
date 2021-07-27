@@ -2,7 +2,6 @@ import {
   Matrix as MLMatrix,
   inverse,
   determinant,
-  solve,
   SingularValueDecomposition,
 } from "ml-matrix";
 import { MatrixLike, MatrixMapperFunction } from "../types";

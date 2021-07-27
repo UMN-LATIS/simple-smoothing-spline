@@ -41,7 +41,7 @@ describe("simple-smoothing-spline", () => {
   });
 
   it("should be performant", () => {
-    const expectedMSperPoint = 1;
+    const expectedMSperPoint = 2;
     const dataSet = moarData.slice(0, 500);
 
     timeit.start("smoothingSpline");

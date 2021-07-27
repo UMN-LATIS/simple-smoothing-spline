@@ -1,8 +1,7 @@
 import { Point } from "../types";
 import getAllXs from "../helpers/getAllXs";
 import pos from "../helpers/pos";
-// import { Matrix, matrix, transpose } from "mathjs";
-import Matrix from "../matrix/matrix";
+import Matrix from "../matrix/index";
 
 export const createBasisArray = (x: number, data: Point[]): number[] => [
   1,

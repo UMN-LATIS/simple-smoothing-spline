@@ -1,14 +1,4 @@
-// import {
-//   transpose,
-//   matrix,
-//   add,
-//   multiply,
-//   inv,
-//   Matrix,
-//   identity,
-// } from "mathjs";
-
-import Matrix from "../matrix/matrix";
+import Matrix from "../matrix/index";
 import { createBasisMatrix } from "./createBasis";
 import getAllYs from "../helpers/getAllYs";
 import { Point } from "../types";
