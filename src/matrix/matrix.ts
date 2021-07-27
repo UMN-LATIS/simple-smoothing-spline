@@ -107,11 +107,10 @@ export default class Matrix implements MatrixLike {
   }
 
   static solve(leftHandSide: Matrix, rightHandSide: Matrix): Matrix {
-    const solution = solve(
-      leftHandSide.#mlMatrix,
-      rightHandSide.#mlMatrix,
-      true
-    );
+    const SVD = new SingularValueDecomposition(leftHandSide.#mlMatrix, {
+      autoTranspose: true,
+    });
+    const solution = SVD.solve(rightHandSide.#mlMatrix);
     return new Matrix(solution);
   }
 }

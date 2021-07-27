@@ -25,7 +25,7 @@ import { Point } from "../types";
  *    data set
  *
  * The solution for β̂ can be found with:
- *  β̂ = inverseMatrix(transpose(X) * X + λ*I)
+ *  β̂ = (transpose(X) * X + λ*I)^-1
  *       * transpose(X) * y
  *
  * See: https://online.stat.psu.edu/stat857/node/155/
@@ -39,11 +39,9 @@ export function solveForBetasNaive(data: Point[], lambda: number) {
   const λI = Matrix.identity(X.cols, { scalar: lambda });
 
   // transpose(M) * M + λ*I
-  const inner = Xtrans.multiply(X).add(λI) as Matrix;
+  const inner = Xtrans.multiply(X).add(λI);
 
-  // const invInner = inner.inverse();
-
-  const betas = inner.inverse().multiply(Xtrans).multiply(y);
+  const betas = inner.inverse().multiply(Xtrans.multiply(y));
   return betas;
 }
 
@@ -52,7 +50,7 @@ export function solveForBetasNaive(data: Point[], lambda: number) {
 export function solveForBetasWithSVD(data: Point[], lambda: number) {
   const X = createBasisMatrix(data);
   const y = new Matrix([getAllYs(data)]).transpose();
-  const { U, S, V } = X.toSVD();
+  const { U, S, V } = createBasisMatrix(data).toSVD();
   // const Xtrans = X.transpose();
 
   // λ*I
@@ -62,11 +60,11 @@ export function solveForBetasWithSVD(data: Point[], lambda: number) {
   const inner = S.multiply(S).add(λI).inverse();
 
   // S * U' * y where U' is the transpose of U
-  const SUty = S.multiply(U.transpose()).multiply(y);
+  const SUty = S.multiply(U.transpose().multiply(y));
 
   // All together V(S^2 + λI)^-1 * S * U' * y
-  const betas = V.multiply(inner).multiply(SUty);
+  const betas = V.multiply(inner.multiply(SUty));
   return betas;
 }
 
-export default solveForBetasWithSVD;
+export default solveForBetasNaive;
