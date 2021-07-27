@@ -1,4 +1,10 @@
-import { Matrix as MLMatrix, inverse, determinant, solve } from "ml-matrix";
+import {
+  Matrix as MLMatrix,
+  inverse,
+  determinant,
+  solve,
+  SingularValueDecomposition,
+} from "ml-matrix";
 import { MatrixLike, MatrixMapperFunction } from "../types";
 
 export default class Matrix implements MatrixLike {
@@ -84,6 +90,20 @@ export default class Matrix implements MatrixLike {
   add(otherMatrix: Matrix): Matrix {
     const sum = this.#mlMatrix.add(otherMatrix.#mlMatrix);
     return new Matrix(sum);
+  }
+
+  /**
+   * Singular Value Decomposition of a matrix
+   */
+  toSVD(): { U: Matrix; S: Matrix; V: Matrix } {
+    const svd = new SingularValueDecomposition(this.#mlMatrix, {
+      autoTranspose: true,
+    });
+    return {
+      U: new Matrix(svd.leftSingularVectors),
+      S: new Matrix(svd.diagonalMatrix),
+      V: new Matrix(svd.rightSingularVectors),
+    };
   }
 
   static solve(leftHandSide: Matrix, rightHandSide: Matrix): Matrix {

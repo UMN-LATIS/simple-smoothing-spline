@@ -30,7 +30,7 @@ import { Point } from "../types";
  *
  * See: https://online.stat.psu.edu/stat857/node/155/
  */
-export default function solveForBetas(data: Point[], lambda: number) {
+export function solveForBetasNaive(data: Point[], lambda: number) {
   const X = createBasisMatrix(data);
   const y = new Matrix([getAllYs(data)]).transpose();
   const Xtrans = X.transpose();
@@ -46,3 +46,27 @@ export default function solveForBetas(data: Point[], lambda: number) {
   const betas = inner.inverse().multiply(Xtrans).multiply(y);
   return betas;
 }
+
+// betas = V(S^2 + λI)^-1 * S * U' * y
+// see: https://www.cs.ubc.ca/~murphyk/Teaching/CS540-Fall08/L5.pdf
+export function solveForBetasWithSVD(data: Point[], lambda: number) {
+  const X = createBasisMatrix(data);
+  const y = new Matrix([getAllYs(data)]).transpose();
+  const { U, S, V } = X.toSVD();
+  // const Xtrans = X.transpose();
+
+  // λ*I
+  const λI = Matrix.identity(S.cols, { scalar: lambda });
+
+  // S^2 + λI)^-1
+  const inner = S.multiply(S).add(λI).inverse();
+
+  // S * U' * y where U' is the transpose of U
+  const SUty = S.multiply(U.transpose()).multiply(y);
+
+  // All together V(S^2 + λI)^-1 * S * U' * y
+  const betas = V.multiply(inner).multiply(SUty);
+  return betas;
+}
+
+export default solveForBetasWithSVD;
