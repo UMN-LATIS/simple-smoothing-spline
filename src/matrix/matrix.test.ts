@@ -220,4 +220,25 @@ describe("Matrix", () => {
       `);
     });
   });
+
+  describe("solve", () => {
+    it("solves a system of linear equations", () => {
+      // pretend we're looking for coeffs of a polynomial
+      const cubic = (x: number) => 2 + 3 * x + -4 * x ** 2 + 5 * x ** 3;
+      // we have a system of 4 coeffs, so we need 4 equations
+      const xs = [1, 2, 3, 4];
+      const ys = xs.map(cubic);
+
+      // system of equations
+      // a * 1 + b * x^2 + c * x^3 + d * x^4 = y
+      const A = new Matrix([...xs.map((x) => [1, x, x ** 2, x ** 3])]);
+      const b = new Matrix([ys]).transpose();
+      const coeffs = Matrix.solve(A, b);
+      const expectedCoeffs = [2, 3, -4, 5];
+      const coeffArray = coeffs.toArray();
+      coeffArray.flat().forEach((coeff, i) => {
+        expect(coeff).toBeCloseTo(expectedCoeffs[i]);
+      });
+    });
+  });
 });

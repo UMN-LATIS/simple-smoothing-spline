@@ -1,4 +1,4 @@
-import { Matrix as MLMatrix, inverse, determinant } from "ml-matrix";
+import { Matrix as MLMatrix, inverse, determinant, solve } from "ml-matrix";
 import { MatrixLike, MatrixMapperFunction } from "../types";
 
 export default class Matrix implements MatrixLike {
@@ -84,5 +84,14 @@ export default class Matrix implements MatrixLike {
   add(otherMatrix: Matrix): Matrix {
     const sum = this.#mlMatrix.add(otherMatrix.#mlMatrix);
     return new Matrix(sum);
+  }
+
+  static solve(leftHandSide: Matrix, rightHandSide: Matrix): Matrix {
+    const solution = solve(
+      leftHandSide.#mlMatrix,
+      rightHandSide.#mlMatrix,
+      true
+    );
+    return new Matrix(solution);
   }
 }
