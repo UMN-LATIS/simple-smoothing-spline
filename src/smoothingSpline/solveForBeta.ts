@@ -26,7 +26,7 @@ export function solveForBetasNaive(data: Point[], lambda: number) {
   const Xtrans = X.transpose();
 
   // λ*I
-  const λI = Matrix.identity(X.cols, { scalar: lambda });
+  const λI = Matrix.identity(X.cols, lambda);
 
   // transpose(M) * M + λ*I
   const inner = Xtrans.multiply(X).add(λI);
@@ -37,24 +37,24 @@ export function solveForBetasNaive(data: Point[], lambda: number) {
 
 // betas = V(S^2 + λI)^-1 * S * U' * y
 // see: https://www.cs.ubc.ca/~murphyk/Teaching/CS540-Fall08/L5.pdf
-export function solveForBetasWithSVD(data: Point[], lambda: number) {
-  const X = createBasisMatrix(data);
-  const y = new Matrix([getAllYs(data)]).transpose();
-  const { U, S, V } = createBasisMatrix(data).toSVD();
-  // const Xtrans = X.transpose();
+// export function solveForBetasWithSVD(data: Point[], lambda: number) {
+//   const X = createBasisMatrix(data);
+//   const y = new Matrix([getAllYs(data)]).transpose();
+//   const { U, S, V } = createBasisMatrix(data).toSVD();
+//   // const Xtrans = X.transpose();
 
-  // λ*I
-  const λI = Matrix.identity(S.cols, { scalar: lambda });
+//   // λ*I
+//   const λI = Matrix.identity(S.cols, lambda);
 
-  // S^2 + λI)^-1
-  const inner = S.multiply(S).add(λI).inverse();
+//   // S^2 + λI)^-1
+//   const inner = S.multiply(S).add(λI).inverse();
 
-  // S * U' * y where U' is the transpose of U
-  const SUty = S.multiply(U.transpose().multiply(y));
+//   // S * U' * y where U' is the transpose of U
+//   const SUty = S.multiply(U.transpose().multiply(y));
 
-  // All together V(S^2 + λI)^-1 * S * U' * y
-  const betas = V.multiply(inner.multiply(SUty));
-  return betas;
-}
+//   // All together V(S^2 + λI)^-1 * S * U' * y
+//   const betas = V.multiply(inner.multiply(SUty));
+//   return betas;
+// }
 
 export default solveForBetasNaive;

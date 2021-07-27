@@ -153,7 +153,7 @@ describe("Matrix", () => {
     });
     it("can include an optional scalar", () => {
       const scalar = 2;
-      const m = Matrix.identity(3, { scalar });
+      const m = Matrix.identity(3, scalar);
       expect(m.rows).toBe(3);
       expect(m.cols).toBe(3);
       expect(m.toArray()).toEqual([
