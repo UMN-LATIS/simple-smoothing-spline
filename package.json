@@ -35,7 +35,11 @@
     "publish": "npm run build && np",
     "clean": "rimraf dist example/dist",
     "build": "npm run clean && npm run lint && tsc --project tsconfig.json && npm run bundle",
-    "bundle": "rollup -c rollup.config.js dist/index.js"
+    "bundle": "rollup -c rollup.config.js dist/index.js",
+    "gh-pages:build": "snowpack build",
+    "gh-pages:serve": "npx serve build",
+    "gh-pages:publish": "gh-pages --dotfiles --dist build",
+    "gh-pages": "npm run gh-pages:build && npm run gh-pages:publish"
   },
   "author": {
     "name": "James Johnson",
