@@ -214,6 +214,28 @@ describe("Matrix", () => {
         );
       });
     });
+
+    describe("get", () => {
+      it("gets a value of a matrix", () => {
+        const m = new Matrix([
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 10],
+        ]);
+        expect(m.get(1, 2)).toBe(6);
+      });
+    });
+    describe("set", () => {
+      it("sets a value of a matrix", () => {
+        const m = new Matrix([
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 10],
+        ]);
+        m.set(1, 2, 10);
+        expect(m.get(1, 2)).toBe(10);
+      });
+    });
   });
 
   // describe("solve", async () => {

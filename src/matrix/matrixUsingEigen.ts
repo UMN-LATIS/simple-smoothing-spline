@@ -84,8 +84,12 @@ export default class Matrix implements MatrixLike<Matrix> {
   }
 
   set(row: number, col: number, value: number): void {
-    // avoid mutation
-    throw Error("Not Implemented.");
+    this._data[row][col] = value;
+
+    // update eigenMatrix if it exists
+    if (this._eigenMatrix) {
+      this._eigenMatrix.set(row, col, value);
+    }
   }
 
   map(fn: MatrixMapperFunction): Promise<Matrix> {
