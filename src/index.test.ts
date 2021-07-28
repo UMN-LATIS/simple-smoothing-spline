@@ -4,7 +4,7 @@ import timeit from "./helpers/timeit";
 import range from "./helpers/range";
 import randomData from "./helpers/randomData";
 
-const dataWithSomeNoise = randomData.getPoints(1000);
+const dataWithSomeNoise = randomData.getPoints(100);
 const trueFunction = randomData.trueFunction;
 
 describe("simple-smoothing-spline", () => {
@@ -39,7 +39,19 @@ describe("simple-smoothing-spline", () => {
     await expect(testFn).rejects.toThrowError("lambda must be greater than 0");
   });
 
-  it("should be performant", async () => {
+  it("should not force a spline through the origin", async () => {
+    const data = [
+      { x: -1, y: 10 },
+      { x: 0, y: 9 },
+      { x: 1, y: 8 },
+      { x: 2, y: 7 },
+      { x: 3, y: 6 },
+    ];
+    const spline = await smoothingSpline(data);
+    expect(spline.fn(0)).toBeCloseTo(9, 0.001);
+  });
+
+  it.skip("should be performant", async () => {
     // target right now is for 600ms for n=500.
     // and for it to scale O(n^3)
     // So, expected time/n = 600/(500^3) = 0.0000048 ms/pt
