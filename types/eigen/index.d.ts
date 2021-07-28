@@ -35,5 +35,9 @@ declare module "eigen" {
     ): SVDecomposition;
   };
 
+  export const GC: {
+    flush(): void;
+  };
+
   export const ready: Promise<void>;
 }

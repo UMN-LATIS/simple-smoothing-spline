@@ -1,6 +1,10 @@
 import eigen from "eigen";
 import create2DArray from "../helpers/create2DArray";
-import { MatrixLike, MatrixMapperFunction } from "../types";
+import {
+  MatrixLike,
+  MatrixMapperFunction,
+  SingleValueDecomposition,
+} from "../types";
 
 type EigenMatrixType = eigen.Matrix;
 
@@ -21,7 +25,7 @@ function eigenMatrixToArray(M: EigenMatrixType): number[][] {
 }
 
 // See: http://pillowlab.princeton.edu/teaching/statneuro2018/slides/notes02_SVD.pdf
-interface MatrixAsSVD {
+interface EigenSVD {
   // leftSingular
   U: EigenMatrixType;
   sv: EigenMatrixType;
@@ -36,7 +40,7 @@ export default class Matrix implements MatrixLike<Matrix> {
   _data: number[][] = [[]];
   // _eigenMatrix: EigenMatrix | null = null;
   _eigenMatrix: EigenMatrixType | null = null;
-  _svd: MatrixAsSVD | null = null;
+  _svd: EigenSVD | null = null;
   _svdIsDirty: boolean = true;
   rows: number = 0;
   cols: number = 0;
@@ -93,7 +97,7 @@ export default class Matrix implements MatrixLike<Matrix> {
     return this._eigenMatrix;
   }
 
-  async #getSVD(): Promise<MatrixAsSVD> {
+  async #getSVD(): Promise<EigenSVD> {
     if (this._svd && !this._svdIsDirty) return this._svd;
 
     // if no SVD exists, calculate it
@@ -136,7 +140,12 @@ export default class Matrix implements MatrixLike<Matrix> {
     return M.det();
   }
 
-  async inverse(): Promise<Matrix> {
+  async inverse(useSVD = true): Promise<Matrix> {
+    if (!useSVD) {
+      const M = await this.#getEigenMatrix();
+      return new Matrix(M.inverse());
+    }
+
     // see this excellent description of SVDecomposition:
     // https://pillowlab.princeton.edu/teaching/statneuro2018/slides/notes02_SVD.pdf
 
@@ -167,6 +176,20 @@ export default class Matrix implements MatrixLike<Matrix> {
     sigmaInverseMatrix.setBlock(0, 0, eigen.Matrix.diagonal(sigmaInvVector));
     const Ainv = V.matMul(sigmaInverseMatrix).matMul(Ut);
     return new Matrix(Ainv);
+  }
+
+  // creates a diagonal matrix of rows x cols. Fills in diagonal with
+  // the values in the vector. The remaining values are 0.
+  static async diagonal(vector: number[], rows?: number, columns?: number) {
+    await eigen.ready;
+    const diag = eigen.Matrix.diagonal(new eigen.Matrix(vector));
+    if (!rows || !columns) return new Matrix(diag);
+
+    // if we have a specified number of rows and columns,
+    // we need to create a matrix of that size
+    const M = new eigen.Matrix(rows, columns);
+    M.setBlock(0, 0, diag);
+    return new Matrix(M);
   }
 
   async multiply(matrix: Matrix): Promise<Matrix> {
@@ -208,11 +231,20 @@ export default class Matrix implements MatrixLike<Matrix> {
     return this._data;
   }
 
-  toSVD(): Promise<Matrix> {
-    throw new Error("Method not implemented.");
+  async toSVD(): Promise<SingleValueDecomposition<Matrix>> {
+    const { U, sv, V } = await this.#getSVD();
+    return {
+      U: new Matrix(U),
+      sigmaVector: eigenMatrixToArray(sv).flat(),
+      V: new Matrix(V),
+    };
   }
 
   solve(): Promise<Matrix> {
     throw new Error("Method not implemented.");
+  }
+
+  static _flushMemory(): void {
+    eigen.GC.flush();
   }
 }

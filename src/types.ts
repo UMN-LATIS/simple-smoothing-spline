@@ -25,3 +25,9 @@ export interface MatrixLike<T> {
   multiplyScalar(scalar: number): Promise<T>;
   add(matrix: T): Promise<T>;
 }
+
+export interface SingleValueDecomposition<T> {
+  U: T;
+  sigmaVector: number[];
+  V: T;
+}

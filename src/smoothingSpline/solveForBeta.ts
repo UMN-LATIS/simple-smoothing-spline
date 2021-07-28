@@ -40,29 +40,72 @@ export async function solveForBetasNaive(
     Xtrans.multiply(y),
   ]);
   const betas = await innerInv.multiply(XtY);
+
+  console.log(
+    JSON.stringify(
+      {
+        X,
+        y,
+        Xtrans,
+        λI,
+        XtX,
+        inner,
+        innerInv,
+        XtY,
+        betas,
+      },
+      null,
+      2
+    )
+  );
+
+  // clean up memory
+  Matrix._flushMemory();
+
+  return betas.toArray().flat();
+}
+// betas = V(S^2 + λI)^-1 * S * U' * y
+// see: https://www.cs.ubc.ca/~murphyk/Teaching/CS540-Fall08/L5.pdf
+export async function solveForBetasWithSVD(data: Point[], lambda: number) {
+  // If X = U*S*V^T, the singular value decomposition of the X matrix
+  // and y = the vector of y values for given x's
+  // and U' is the transpose of U, then we can calcuate betas as:
+  //     betas = V * (S^2 + λI)^{−1} S*U'*y
+
+  const X = await createBasisMatrix(data);
+  const y = await new Matrix([getAllYs(data)]).transpose();
+
+  // calculate the SVD decomposition of X
+  const { U, sigmaVector, V } = await X.toSVD();
+
+  // (S^2 + λI)^{-1}
+  // S^2 and λI are both diagonal matrices, so we just add the vectors
+  // together. Additionally, inverse of a diagonal matrix is just the
+  // reciprocal of the diagonal.
+  // In the case where (S^2 + λI) === 0, we can't invert, so we just
+  // set the inverse to 0.
+  const innerInverse = sigmaVector.map((s) => {
+    const s2pluslambda = s * s + lambda;
+    return s2pluslambda === 0 ? 0 : 1 / s2pluslambda;
+  });
+
+  // now turns this vector into a matrix
+  const [innerInv, Utrans, S] = await Promise.all([
+    Matrix.diagonal(innerInverse),
+    U.transpose(),
+    Matrix.diagonal(sigmaVector),
+  ]);
+
+  // betas = V * (S^2 + λI)^{−1} S*U'*y
+  //       = V * inner * U' * y
+  const betas = await V.multiply(innerInv)
+    .then((res) => res.multiply(S))
+    .then((res) => res.multiply(Utrans))
+    .then((res) => res.multiply(y));
+
+  // clean up memory
+  Matrix._flushMemory();
   return betas.toArray().flat();
 }
 
-// betas = V(S^2 + λI)^-1 * S * U' * y
-// see: https://www.cs.ubc.ca/~murphyk/Teaching/CS540-Fall08/L5.pdf
-// export function solveForBetasWithSVD(data: Point[], lambda: number) {
-//   const X = createBasisMatrix(data);
-//   const y = new Matrix([getAllYs(data)]).transpose();
-//   const { U, S, V } = createBasisMatrix(data).toSVD();
-//   // const Xtrans = X.transpose();
-
-//   // λ*I
-//   const λI = Matrix.identity(S.cols, lambda);
-
-//   // S^2 + λI)^-1
-//   const inner = S.multiply(S).add(λI).inverse();
-
-//   // S * U' * y where U' is the transpose of U
-//   const SUty = S.multiply(U.transpose().multiply(y));
-
-//   // All together V(S^2 + λI)^-1 * S * U' * y
-//   const betas = V.multiply(inner.multiply(SUty));
-//   return betas;
-// }
-
-export default solveForBetasNaive;
+export default solveForBetasWithSVD;
