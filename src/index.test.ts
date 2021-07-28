@@ -1,16 +1,11 @@
 import { expect } from "@jest/globals";
 import smoothingSpline from "./index";
-import moarData from "./fixtures/moarData";
 import timeit from "./helpers/timeit";
-import { Point } from "./types";
 import range from "./helpers/range";
+import randomData from "./helpers/randomData";
 
-const cubic = (x: number): number => 5 - 2 * x + 3 * x ** 2 - x ** 3;
-const dataWithSomeNoise: Point[] = range(0, 10).map((x) => ({
-  x,
-  // using sin(x) for a little noise
-  y: cubic(x) + 0.1 * Math.sin(x),
-}));
+const dataWithSomeNoise = randomData.getPoints(1000);
+const trueFunction = randomData.trueFunction;
 
 describe("simple-smoothing-spline", () => {
   it("creates spline points with given data", async () => {
@@ -20,8 +15,10 @@ describe("simple-smoothing-spline", () => {
     expect(points.length).toBe(1000);
     // expect our points are close to the real ones
     // with a small lambda
+
     points.forEach(({ x, y }) => {
-      expect(y).toBeCloseTo(cubic(x), 0.1);
+      const eps = Math.log(Math.abs(trueFunction(x)));
+      expect(y).toBeCloseTo(trueFunction(x), 2 * eps);
     });
   });
 
@@ -32,8 +29,8 @@ describe("simple-smoothing-spline", () => {
 
   it("takes an optional lambda parameter", async () => {
     const spline = await smoothingSpline(dataWithSomeNoise, { lambda: 1 });
-    expect(spline.fn(2)).toBeCloseTo(4.82454, 0.001);
-    expect(spline.fn(3)).toBeCloseTo(-0.960338, 0.001);
+    expect(spline.fn(2)).toBeCloseTo(trueFunction(2), 0.001);
+    expect(spline.fn(3)).toBeCloseTo(trueFunction(3), 0.001);
   });
 
   it("throws an error unless lambda is positive", async () => {
