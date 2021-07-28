@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "marky": "./marky.js",
+    "mathjs": "./mathjs.js"
+  }
+}
