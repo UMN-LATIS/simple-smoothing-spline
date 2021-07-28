@@ -1,4 +1,5 @@
-import { getPoints } from "../../src/helpers/randomData";
+// import { getPoints } from "../../src/helpers/randomData";
+import moarData from "../data/moarData";
 import { createStore } from "./createStore.js";
 
 export const INPUT_CHANGE = "INPUT_CHANGE";
@@ -10,7 +11,8 @@ export const INPUT_CHANGE = "INPUT_CHANGE";
 // we load in two data sets and set a default lambda
 let initialState = {
   data: {
-    randomData: getPoints(400),
+    // randomData: getPoints(400),
+    moarData,
   },
   lambda: 1,
 };
