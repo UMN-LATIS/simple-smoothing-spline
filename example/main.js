@@ -6,6 +6,7 @@ import plot from "./helpers/plot.js";
 import getAllData from "./helpers/getAllData.js";
 import handleInputChange from "./helpers/handleInputChange.js";
 import onReady from "./helpers/onReady.js";
+import timeit from "../src/helpers/timeit";
 
 const PLOT_ID = "plot";
 
@@ -17,9 +18,13 @@ async function render(state) {
 
   // get points for the spline
   const data = getAllData(state);
+
+  timeit.start("simpleSmoothingSpline: smooth");
   const smoothSpline = await simpleSmoothingSpline(data, {
     lambda: state.lambda,
   });
+  timeit.stop("simpleSmoothingSpline: smooth", { log: true });
+
   const cubicSpline = await simpleSmoothingSpline(data, { type: "cubic" });
 
   // render plot with data and smoothing spline points

@@ -1,5 +1,5 @@
 import { CCS, SpR } from "../data/data.js";
-import moarData from "../data/moarData.js";
+// import moarData from "../data/moarData.js";
 // import simple from "../data/simple";
 import { createStore } from "./createStore.js";
 
@@ -9,10 +9,10 @@ export const INPUT_CHANGE = "INPUT_CHANGE";
 // we load in two data sets and set a default lambda
 let initialState = {
   data: {
-    // CCS,
-    // SpR,
+    CCS,
+    SpR,
     // CCS2: CCS.map(({ x, y }) => ({ x: x + Math.sin(x), y: y + Math.cos(x) })),
-    moarData,
+    // moarData: moarData.splice(0, 1000),
     // simple,
   },
   lambda: 1,
