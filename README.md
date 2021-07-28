@@ -18,7 +18,7 @@ const data = [
   { x: 4, y: 15 },
 ];
 
-const spline = simpleSmoothingSpline(data, { lambda: 1000 });
+const spline = await simpleSmoothingSpline(data, { lambda: 1000 });
 
 // spline.points is a collection of {x, y} values
 // between the min and max the x values in the data set
@@ -57,7 +57,7 @@ Then, in your scripts, you can call a global `simpleSmoothingSpline()` function.
 
 ## API
 
-### `simpleSmoothingSpline(data, opts)`
+### `async simpleSmoothingSpline(data, opts)`
 
 Parameters:
 
@@ -68,10 +68,10 @@ Parameters:
   Example:
 
   ```js
-  const cubicSpline = simpleSmoothingSpline(data, { type: "cubic" });
+  const cubicSpline = await simpleSmoothingSpline(data, { type: "cubic" });
   ```
 
-Returns:
+Returns a `Promise` for::
 
 - `spline.points` - An array of `{x, y}` points on the smoothing spline in the range of the data (between min(x) and max(x)).
 - `spline.fn` - A function to get an arbitrary f(x) for a given x.
@@ -79,7 +79,7 @@ Returns:
   Example:
 
   ```js
-  const spline = simpleSmoothingSpline(data, { lambda: 2 ** 8 });
+  const spline = await simpleSmoothingSpline(data, { lambda: 2 ** 8 });
   const y = spline.fn(3);
   // y is value on the spline when x = 3
   ```
