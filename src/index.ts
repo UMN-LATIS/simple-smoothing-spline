@@ -3,16 +3,19 @@ import generateCubicSplineFunction from "./cubicSpline/generateCubicSplineFuncti
 import getAllXs from "./helpers/getAllXs";
 import { Point, SplineFunction } from "./types";
 
-function generateSplinePoints(splineFn: (x: number) => number, data: Point[]) {
-  const splinePoints = [];
-
+async function generateSplinePoints(
+  splineFn: (x: number) => number,
+  data: Point[]
+) {
   const minX = Math.min(...getAllXs(data));
   const maxX = Math.max(...getAllXs(data));
   const stepSize = (maxX - minX) / 1000;
 
-  for (let i = minX; i <= maxX; i += stepSize) {
-    splinePoints.push({ x: i, y: splineFn(i) });
-  }
+  const xs = [...Array(1000).keys()].map((i) => minX + i * stepSize);
+  const splinePoints = await Promise.all([
+    ...xs.map((x) => ({ x, y: splineFn(x) })),
+  ]);
+
   return splinePoints;
 }
 
@@ -21,19 +24,24 @@ interface smoothingSplineOptions {
   type?: "smoothing" | "cubic";
 }
 
-export default function smoothingSpline(
+interface SmoothingSpline {
+  fn: SplineFunction;
+  points: Point[];
+}
+
+export default async function smoothingSpline(
   data: Point[],
   { lambda = 1000, type = "smoothing" }: smoothingSplineOptions = {}
-) {
-  let splineFn: (x: number) => number;
+): Promise<SmoothingSpline> {
+  let splineFn: SplineFunction;
 
   if (type === "cubic") {
     splineFn = generateCubicSplineFunction(data);
   } else {
-    splineFn = generateSmoothingSplineFunction(data, { lambda });
+    splineFn = await generateSmoothingSplineFunction(data, { lambda });
   }
 
-  const splinePoints = generateSplinePoints(splineFn, data);
+  const splinePoints = await generateSplinePoints(splineFn, data);
   return {
     fn: splineFn,
     points: splinePoints,

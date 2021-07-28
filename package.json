@@ -63,6 +63,8 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "mathjs": "^9.4.4"
+    "eigen": "^0.2.0",
+    "mathjs": "^9.4.4",
+    "ml-matrix": "^6.8.0"
   }
 }

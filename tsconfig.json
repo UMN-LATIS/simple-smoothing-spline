@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "lib": ["es6", "dom", "dom.iterable"],
+    "lib": ["es6", "dom", "dom.iterable", "ES2019"],
     "module": "es6",
     "moduleResolution": "node",
     "removeComments": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es6",
+    "target": "es2019",
     "outDir": "./dist",
     "esModuleInterop": true,
     "typeRoots": ["./types", "./node_modules/@types"]
