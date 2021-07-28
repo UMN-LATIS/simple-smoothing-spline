@@ -44,8 +44,11 @@ describe("simple-smoothing-spline", () => {
   });
 
   it("should be performant", async () => {
-    const expectedMSperPoint = 2;
-    const dataSet = moarData.slice(0, 500);
+    const expectedMSperPoint = 1;
+    const dataSet = range(0, 1000).map((x) => ({
+      x,
+      y: Math.sin(x) + 0.1 * Math.random() - 0.5,
+    }));
 
     timeit.start("smoothingSpline");
     await smoothingSpline(dataSet);
