@@ -20,19 +20,27 @@ import { Point } from "../types";
  *
  * See: https://online.stat.psu.edu/stat857/node/155/
  */
-export function solveForBetasNaive(data: Point[], lambda: number) {
-  const X = createBasisMatrix(data);
-  const y = new Matrix([getAllYs(data)]).transpose();
-  const Xtrans = X.transpose();
-
-  // λ*I
-  const λI = Matrix.identity(X.cols, lambda);
+export async function solveForBetasNaive(
+  data: Point[],
+  lambda: number
+): Promise<number[]> {
+  const X = await createBasisMatrix(data);
+  const yRow = new Matrix([getAllYs(data)]);
+  const [y, Xtrans, λI] = await Promise.all([
+    yRow.transpose(),
+    X.transpose(),
+    Matrix.identity(X.cols, lambda),
+  ]);
 
   // transpose(M) * M + λ*I
-  const inner = Xtrans.multiply(X).add(λI);
-
-  const betas = inner.inverse().multiply(Xtrans.multiply(y));
-  return betas;
+  const XtX = await Xtrans.multiply(X);
+  const inner = await XtX.add(λI);
+  const [innerInv, XtY] = await Promise.all([
+    inner.inverse(),
+    Xtrans.multiply(y),
+  ]);
+  const betas = await innerInv.multiply(XtY);
+  return betas.toArray().flat();
 }
 
 // betas = V(S^2 + λI)^-1 * S * U' * y

@@ -14,8 +14,10 @@ const dataWithSomeNoise: Point[] = range(0, 10).map((x) => ({
 }));
 
 describe("simple-smoothing-spline", () => {
-  it("creates spline points with given data", () => {
-    const { points } = smoothingSpline(dataWithSomeNoise, { lambda: 0.0001 });
+  it("creates spline points with given data", async () => {
+    const { points } = await smoothingSpline(dataWithSomeNoise, {
+      lambda: 0.0001,
+    });
     expect(points.length).toBe(1000);
     // expect our points are close to the real ones
     // with a small lambda
@@ -24,28 +26,29 @@ describe("simple-smoothing-spline", () => {
     });
   });
 
-  it("makes a spline function that gives a y for a given x", () => {
-    const spline = smoothingSpline(dataWithSomeNoise);
+  it("makes a spline function that gives a y for a given x", async () => {
+    const spline = await smoothingSpline(dataWithSomeNoise);
     spline.points.forEach(({ x, y }) => expect(spline.fn(x)).toBe(y));
   });
 
-  it("takes an optional lambda parameter", () => {
-    const spline = smoothingSpline(dataWithSomeNoise, { lambda: 1 });
+  it("takes an optional lambda parameter", async () => {
+    const spline = await smoothingSpline(dataWithSomeNoise, { lambda: 1 });
     expect(spline.fn(2)).toBeCloseTo(4.82454, 0.001);
     expect(spline.fn(3)).toBeCloseTo(-0.960338, 0.001);
   });
 
-  it("throws an error unless lambda is positive", () => {
-    const testFn = () => smoothingSpline(dataWithSomeNoise, { lambda: 0 });
-    expect(testFn).toThrowError("lambda must be greater than 0");
+  it("throws an error unless lambda is positive", async () => {
+    const testFn = async () =>
+      await smoothingSpline(dataWithSomeNoise, { lambda: 0 });
+    await expect(testFn).rejects.toThrowError("lambda must be greater than 0");
   });
 
-  it("should be performant", () => {
+  it("should be performant", async () => {
     const expectedMSperPoint = 2;
     const dataSet = moarData.slice(0, 500);
 
     timeit.start("smoothingSpline");
-    smoothingSpline(dataSet);
+    await smoothingSpline(dataSet);
     const runtime = timeit.stop("smoothingSpline");
     expect(runtime).toBeLessThan(expectedMSperPoint * dataSet.length);
   });

@@ -6,7 +6,7 @@ import {
 } from "ml-matrix";
 import { MatrixLike, MatrixMapperFunction } from "../types";
 
-export default class Matrix implements MatrixLike {
+export default class Matrix implements MatrixLike<Matrix> {
   #mlMatrix: MLMatrix;
 
   constructor(data: number[][] | MLMatrix | Matrix = [[]]) {

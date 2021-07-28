@@ -11,17 +11,17 @@ export type MatrixMapperFunction = (
   column: number
 ) => number;
 
-export interface MatrixLike {
+export interface MatrixLike<T> {
   rows: number;
   cols: number;
   toArray(): number[][];
   get(row: number, col: number): number;
   set(row: number, col: number, value: number): void;
-  map(fn: MatrixMapperFunction): MatrixLike;
-  transpose(): MatrixLike;
-  determinant(): number;
-  inverse(): MatrixLike;
-  multiply(matrix: MatrixLike): MatrixLike;
-  multiplyScalar(scalar: number): MatrixLike;
-  add(matrix: MatrixLike): MatrixLike;
+  map(fn: MatrixMapperFunction): Promise<T>;
+  transpose(): Promise<T>;
+  determinant(): Promise<number>;
+  inverse(): Promise<T>;
+  multiply(matrix: T): Promise<T>;
+  multiplyScalar(scalar: number): Promise<T>;
+  add(matrix: T): Promise<T>;
 }

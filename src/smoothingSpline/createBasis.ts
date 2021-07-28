@@ -20,7 +20,7 @@ export const createBasisArray = (x: number, data: Point[]): number[] => [
  * To be used to beta coefficients to generate
  * the full spline
  */
-export const createBasisCol = (x: number, data: Point[]): Matrix =>
+export const createBasisCol = (x: number, data: Point[]): Promise<Matrix> =>
   new Matrix([createBasisArray(x, data)]).transpose();
 
 /**
@@ -28,7 +28,9 @@ export const createBasisCol = (x: number, data: Point[]): Matrix =>
  * using x values from our data set.
  * We'll need this when solving for betas.
  */
-export const createBasisMatrix = (data: Point[]): Matrix => {
-  const X = getAllXs(data).map((x) => createBasisArray(x, data));
+export const createBasisMatrix = async (data: Point[]): Promise<Matrix> => {
+  const X = await Promise.all([
+    ...getAllXs(data).map((x) => createBasisArray(x, data)),
+  ]);
   return new Matrix(X);
 };

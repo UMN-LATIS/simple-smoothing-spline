@@ -20,4 +20,6 @@ declare module "eigen" {
     transpose(): Matrix;
     inverse(): Matrix;
   }
+
+  export const ready: Promise<void>;
 }
