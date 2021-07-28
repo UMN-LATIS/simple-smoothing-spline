@@ -1,10 +1,12 @@
-import eigen, { Matrix as EigenMatrix } from "eigen";
+import eigen from "eigen";
 import create2DArray from "../helpers/create2DArray";
 import { MatrixLike, MatrixMapperFunction } from "../types";
 
+type EigenMatrixType = eigen.Matrix;
+
 // class EigenMatrix extends eigen.Matrix {}
 
-function eigenMatrixToArray(M: EigenMatrix): number[][] {
+function eigenMatrixToArray(M: EigenMatrixType): number[][] {
   // TODO: Find if there's a more built-in approach to
   // converting an eigen matrix to an array.
   const arr = [];
@@ -18,17 +20,29 @@ function eigenMatrixToArray(M: EigenMatrix): number[][] {
   return arr;
 }
 
+// See: http://pillowlab.princeton.edu/teaching/statneuro2018/slides/notes02_SVD.pdf
+interface MatrixAsSVD {
+  // leftSingular
+  U: EigenMatrixType;
+  sv: EigenMatrixType;
+  // rightSingular
+  V: EigenMatrixType;
+}
+
 export default class Matrix implements MatrixLike<Matrix> {
   // EigenMatrix ops are async so we cannot create #eigenMatrix
   // in the constructor. If we're given an array, we'll store it
   // in #data and create the matrix when we do our first operation.
   _data: number[][] = [[]];
-  _eigenMatrix: EigenMatrix | null = null;
+  // _eigenMatrix: EigenMatrix | null = null;
+  _eigenMatrix: EigenMatrixType | null = null;
+  _svd: MatrixAsSVD | null = null;
+  _svdIsDirty: boolean = true;
   rows: number = 0;
   cols: number = 0;
 
   constructor(
-    data: number[][] | EigenMatrix | Matrix | number,
+    data: number[][] | EigenMatrixType | Matrix | number,
     numCols?: number
   ) {
     // if data is a number, it's the number of rows
@@ -68,7 +82,7 @@ export default class Matrix implements MatrixLike<Matrix> {
     }
   }
 
-  async #getEigenMatrix(): Promise<EigenMatrix> {
+  async #getEigenMatrix(): Promise<EigenMatrixType> {
     if (this._eigenMatrix) return this._eigenMatrix;
     if (!this._eigenMatrix && !this._data) {
       throw Error("Cannot get this EigenMatrix: No #eigenMatrix or #data");
@@ -77,6 +91,16 @@ export default class Matrix implements MatrixLike<Matrix> {
     await eigen.ready;
     this._eigenMatrix = new eigen.Matrix(this._data);
     return this._eigenMatrix;
+  }
+
+  async #getSVD(): Promise<MatrixAsSVD> {
+    if (this._svd && !this._svdIsDirty) return this._svd;
+
+    // if no SVD exists, calculate it
+    const M = await this.#getEigenMatrix();
+    this._svd = eigen.Decompositions.svd(M, true);
+    this._svdIsDirty = false;
+    return this._svd;
   }
 
   get(row: number, col: number): number {
@@ -89,6 +113,12 @@ export default class Matrix implements MatrixLike<Matrix> {
     // update eigenMatrix if it exists
     if (this._eigenMatrix) {
       this._eigenMatrix.set(row, col, value);
+    }
+
+    // mark the SVD as needing update
+    // ugh. I hate this. Let's get rid of mutability?
+    if (this._svd) {
+      this._svdIsDirty = true;
     }
   }
 
@@ -107,8 +137,36 @@ export default class Matrix implements MatrixLike<Matrix> {
   }
 
   async inverse(): Promise<Matrix> {
-    const M = await this.#getEigenMatrix();
-    return new Matrix(M.inverse());
+    // see this excellent description of SVDecomposition:
+    // https://pillowlab.princeton.edu/teaching/statneuro2018/slides/notes02_SVD.pdf
+
+    // In short, to find A^-1, we do:
+    // A^-1 = V * S^-1 * U^T
+    // where S^-1 = [[1/sv{0}, 0...], [0, 1/sv{1}...], ...]
+
+    // U  is the left singular matrix
+    // sv is the vector of sigma values
+    // V  is the right singular matrix
+    const { U, sv, V } = await this.#getSVD();
+
+    const Ut = U.transpose();
+
+    // find the reciprocal of each sigma
+    // if signma === 0, we do the pseudo inverse
+    // that is instead of taking the reciprocal a sigma,
+    // (which would give a divide by zero error), we just
+    // leave it as 0
+    const sigmaVector: number[] = eigenMatrixToArray(sv).flat();
+    const sigmaInvVector = new eigen.Matrix(
+      sigmaVector.map((sigma) => (sigma ? 1 / sigma : 0))
+    );
+
+    // now turn that vector into a matrix of sigma inverse values
+    // fill in 0's for the rest
+    const sigmaInverseMatrix = new eigen.Matrix(V.cols(), Ut.rows());
+    sigmaInverseMatrix.setBlock(0, 0, eigen.Matrix.diagonal(sigmaInvVector));
+    const Ainv = V.matMul(sigmaInverseMatrix).matMul(Ut);
+    return new Matrix(Ainv);
   }
 
   async multiply(matrix: Matrix): Promise<Matrix> {

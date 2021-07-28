@@ -39,8 +39,8 @@ describe("randomData", () => {
       const trueFn = randomData.trueFunction;
       points.forEach((point) => {
         const eps = 2 * (Math.log(Math.abs(trueFn(point.x))) + 0.1);
-        expect(point.y).toBeLessThan(trueFn(point.x) + eps);
-        expect(point.y).toBeGreaterThan(trueFn(point.x) - eps);
+        const expectedY = trueFn(point.x);
+        expect(point.y).toBeCloseTo(expectedY);
       });
     });
   });

@@ -19,7 +19,21 @@ declare module "eigen" {
     matAdd(matrix: Matrix): Matrix;
     transpose(): Matrix;
     inverse(): Matrix;
+    diagonal(vector: Matrix): Matrix;
+    setBlock(topLeftRow: number, topLeftCol: number, M: Matrix): Matrix;
   }
+
+  export interface SVDecomposition {
+    U: Matrix; // left singular matrix
+    sv: Matrix; // vector of sigma values
+    V: Matrix; // right singular matrix
+  }
+  export const Decompositions: {
+    svd(
+      matrix: Matrix,
+      onlyKeepNonZeroSingularValues?: boolean
+    ): SVDecomposition;
+  };
 
   export const ready: Promise<void>;
 }
