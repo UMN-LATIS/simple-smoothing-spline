@@ -3,9 +3,8 @@ import smoothingSpline from "./index";
 import moarData from "./fixtures/moarData";
 import timeit from "./helpers/timeit";
 import { Point } from "./types";
+import range from "./helpers/range";
 
-const range = (start: number, end: number) =>
-  [...Array(end - start).keys()].map((i) => start + i);
 const cubic = (x: number): number => 5 - 2 * x + 3 * x ** 2 - x ** 3;
 const dataWithSomeNoise: Point[] = range(0, 10).map((x) => ({
   x,
