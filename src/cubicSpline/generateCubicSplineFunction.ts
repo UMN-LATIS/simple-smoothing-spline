@@ -34,9 +34,11 @@ export default async (data: Point[]): Promise<SplineFunction> => {
   const transposedBasisMatrix = await basisMatrix.transpose();
   const Y = await new Matrix([ys]).transpose();
 
+  //betas = (X'*X)^-1 * X' * y
   const betas: number[] = await transposedBasisMatrix
     .multiply(basisMatrix)
     .then((M) => M.inverse())
+    .then((M) => M.multiply(transposedBasisMatrix))
     .then((M) => M.multiply(Y))
     .then((M) => M.toArray().flat());
 
