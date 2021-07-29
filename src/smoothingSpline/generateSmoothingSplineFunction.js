@@ -1,15 +1,15 @@
-import {multiply} from "../../_snowpack/pkg/mathjs.js";
-import {createBasisCol} from "./createBasis.js";
+import {createBasisArray} from "./createBasis.js";
 import solveForBetas from "./solveForBeta.js";
 class InvalidLambdaError extends Error {
 }
-export default function generateSmoothingSplineFunction(data, {lambda}) {
+export default async function generateSmoothingSplineFunction(data, {lambda}) {
   if (lambda <= 0) {
     throw new InvalidLambdaError("lambda must be greater than 0");
   }
-  const betas = solveForBetas(data, lambda);
+  const betas = await solveForBetas(data, lambda);
   const splineFn = (x) => {
-    return multiply(betas, createBasisCol(x, data));
+    const basis = createBasisArray(x, data);
+    return betas.reduce((acc, beta, i) => acc += beta * basis[i], 0);
   };
   return splineFn;
 }

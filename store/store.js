@@ -1,16 +1,18 @@
-import { CCS, SpR } from "../data/data.js";
-// import simple from "../data/simple";
+// import { getPoints } from "../../src/helpers/randomData";
+import moarData from "../data/moarData.js";
 import { createStore } from "./createStore.js";
 
 export const INPUT_CHANGE = "INPUT_CHANGE";
+
+// const randomData = getPoints(400);
+// console.log({ randomData });
 
 // this holds the initial state of our application
 // we load in two data sets and set a default lambda
 let initialState = {
   data: {
-    CCS,
-    SpR,
-    // simple,
+    // randomData: getPoints(400),
+    moarData,
   },
   lambda: 1,
 };

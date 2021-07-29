@@ -7,8 +7,11 @@ const timeit = (name) => {
   };
 };
 timeit.start = (name) => marky.mark(name);
-timeit.stop = (name) => {
+timeit.stop = (name, {log = false} = {}) => {
   const time = marky.stop(name);
-  console.log(`👉⏱ ${name} ${time.duration.toFixed(4)}ms`);
+  if (log) {
+    console.log(`👉⏱ ${name} ${time.duration.toFixed(4)}ms`);
+  }
+  return time.duration;
 };
 export default timeit;

@@ -1,22 +1,4 @@
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-function getDefaultExportFromCjs (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-}
-
-function createCommonjsModule(fn, basedir, module) {
-	return module = {
-		path: basedir,
-		exports: {},
-		require: function (path, base) {
-			return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
-		}
-	}, fn(module, module.exports), module.exports;
-}
-
-function commonjsRequire () {
-	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
-}
+import { c as createCommonjsModule, a as getDefaultExportFromCjs, b as commonjsGlobal } from './common/_commonjsHelpers-bc388fbf.js';
 
 var _extends_1 = createCommonjsModule(function (module) {
 function _extends() {
@@ -12567,184 +12549,9 @@ var createAlgorithm01 = /* #__PURE__ */factory(name$g, dependencies$h, _ref => {
   };
 });
 
-var name$h = 'algorithm04';
-var dependencies$i = ['typed', 'equalScalar'];
-var createAlgorithm04 = /* #__PURE__ */factory(name$h, dependencies$i, _ref => {
-  var {
-    typed,
-    equalScalar
-  } = _ref;
-
-  /**
-   * Iterates over SparseMatrix A and SparseMatrix B nonzero items and invokes the callback function f(Aij, Bij).
-   * Callback function invoked MAX(NNZA, NNZB) times
-   *
-   *
-   *          ┌  f(Aij, Bij)  ; A(i,j) !== 0 && B(i,j) !== 0
-   * C(i,j) = ┤  A(i,j)       ; A(i,j) !== 0
-   *          └  B(i,j)       ; B(i,j) !== 0
-   *
-   *
-   * @param {Matrix}   a                 The SparseMatrix instance (A)
-   * @param {Matrix}   b                 The SparseMatrix instance (B)
-   * @param {Function} callback          The f(Aij,Bij) operation to invoke
-   *
-   * @return {Matrix}                    SparseMatrix (C)
-   *
-   * see https://github.com/josdejong/mathjs/pull/346#issuecomment-97620294
-   */
-  return function algorithm04(a, b, callback) {
-    // sparse matrix arrays
-    var avalues = a._values;
-    var aindex = a._index;
-    var aptr = a._ptr;
-    var asize = a._size;
-    var adt = a._datatype; // sparse matrix arrays
-
-    var bvalues = b._values;
-    var bindex = b._index;
-    var bptr = b._ptr;
-    var bsize = b._size;
-    var bdt = b._datatype; // validate dimensions
-
-    if (asize.length !== bsize.length) {
-      throw new DimensionError(asize.length, bsize.length);
-    } // check rows & columns
-
-
-    if (asize[0] !== bsize[0] || asize[1] !== bsize[1]) {
-      throw new RangeError('Dimension mismatch. Matrix A (' + asize + ') must match Matrix B (' + bsize + ')');
-    } // rows & columns
-
-
-    var rows = asize[0];
-    var columns = asize[1]; // datatype
-
-    var dt; // equal signature to use
-
-    var eq = equalScalar; // zero value
-
-    var zero = 0; // callback signature to use
-
-    var cf = callback; // process data types
-
-    if (typeof adt === 'string' && adt === bdt) {
-      // datatype
-      dt = adt; // find signature that matches (dt, dt)
-
-      eq = typed.find(equalScalar, [dt, dt]); // convert 0 to the same datatype
-
-      zero = typed.convert(0, dt); // callback
-
-      cf = typed.find(callback, [dt, dt]);
-    } // result arrays
-
-
-    var cvalues = avalues && bvalues ? [] : undefined;
-    var cindex = [];
-    var cptr = []; // workspace
-
-    var xa = avalues && bvalues ? [] : undefined;
-    var xb = avalues && bvalues ? [] : undefined; // marks indicating we have a value in x for a given column
-
-    var wa = [];
-    var wb = []; // vars
-
-    var i, j, k, k0, k1; // loop columns
-
-    for (j = 0; j < columns; j++) {
-      // update cptr
-      cptr[j] = cindex.length; // columns mark
-
-      var mark = j + 1; // loop A(:,j)
-
-      for (k0 = aptr[j], k1 = aptr[j + 1], k = k0; k < k1; k++) {
-        // row
-        i = aindex[k]; // update c
-
-        cindex.push(i); // update workspace
-
-        wa[i] = mark; // check we need to process values
-
-        if (xa) {
-          xa[i] = avalues[k];
-        }
-      } // loop B(:,j)
-
-
-      for (k0 = bptr[j], k1 = bptr[j + 1], k = k0; k < k1; k++) {
-        // row
-        i = bindex[k]; // check row exists in A
-
-        if (wa[i] === mark) {
-          // update record in xa @ i
-          if (xa) {
-            // invoke callback
-            var v = cf(xa[i], bvalues[k]); // check for zero
-
-            if (!eq(v, zero)) {
-              // update workspace
-              xa[i] = v;
-            } else {
-              // remove mark (index will be removed later)
-              wa[i] = null;
-            }
-          }
-        } else {
-          // update c
-          cindex.push(i); // update workspace
-
-          wb[i] = mark; // check we need to process values
-
-          if (xb) {
-            xb[i] = bvalues[k];
-          }
-        }
-      } // check we need to process values (non pattern matrix)
-
-
-      if (xa && xb) {
-        // initialize first index in j
-        k = cptr[j]; // loop index in j
-
-        while (k < cindex.length) {
-          // row
-          i = cindex[k]; // check workspace has value @ i
-
-          if (wa[i] === mark) {
-            // push value (Aij != 0 || (Aij != 0 && Bij != 0))
-            cvalues[k] = xa[i]; // increment pointer
-
-            k++;
-          } else if (wb[i] === mark) {
-            // push value (bij != 0)
-            cvalues[k] = xb[i]; // increment pointer
-
-            k++;
-          } else {
-            // remove index @ k
-            cindex.splice(k, 1);
-          }
-        }
-      }
-    } // update cptr
-
-
-    cptr[columns] = cindex.length; // return sparse matrix
-
-    return a.createSparseMatrix({
-      values: cvalues,
-      index: cindex,
-      ptr: cptr,
-      size: [rows, columns],
-      datatype: dt
-    });
-  };
-});
-
-var name$i = 'algorithm10';
-var dependencies$j = ['typed', 'DenseMatrix'];
-var createAlgorithm10 = /* #__PURE__ */factory(name$i, dependencies$j, _ref => {
+var name$h = 'algorithm10';
+var dependencies$i = ['typed', 'DenseMatrix'];
+var createAlgorithm10 = /* #__PURE__ */factory(name$h, dependencies$i, _ref => {
   var {
     typed,
     DenseMatrix
@@ -12845,9 +12652,9 @@ var createAlgorithm10 = /* #__PURE__ */factory(name$i, dependencies$j, _ref => {
   };
 });
 
-var name$j = 'algorithm13';
-var dependencies$k = ['typed'];
-var createAlgorithm13 = /* #__PURE__ */factory(name$j, dependencies$k, _ref => {
+var name$i = 'algorithm13';
+var dependencies$j = ['typed'];
+var createAlgorithm13 = /* #__PURE__ */factory(name$i, dependencies$j, _ref => {
   var {
     typed
   } = _ref;
@@ -12937,9 +12744,9 @@ var createAlgorithm13 = /* #__PURE__ */factory(name$j, dependencies$k, _ref => {
   }
 });
 
-var name$k = 'algorithm03';
-var dependencies$l = ['typed'];
-var createAlgorithm03 = /* #__PURE__ */factory(name$k, dependencies$l, _ref => {
+var name$j = 'algorithm03';
+var dependencies$k = ['typed'];
+var createAlgorithm03 = /* #__PURE__ */factory(name$j, dependencies$k, _ref => {
   var {
     typed
   } = _ref;
@@ -13055,9 +12862,9 @@ var createAlgorithm03 = /* #__PURE__ */factory(name$k, dependencies$l, _ref => {
   };
 });
 
-var name$l = 'algorithm05';
-var dependencies$m = ['typed', 'equalScalar'];
-var createAlgorithm05 = /* #__PURE__ */factory(name$l, dependencies$m, _ref => {
+var name$k = 'algorithm05';
+var dependencies$l = ['typed', 'equalScalar'];
+var createAlgorithm05 = /* #__PURE__ */factory(name$k, dependencies$l, _ref => {
   var {
     typed,
     equalScalar
@@ -13223,9 +13030,9 @@ var createAlgorithm05 = /* #__PURE__ */factory(name$l, dependencies$m, _ref => {
   };
 });
 
-var name$m = 'algorithm12';
-var dependencies$n = ['typed', 'DenseMatrix'];
-var createAlgorithm12 = /* #__PURE__ */factory(name$m, dependencies$n, _ref => {
+var name$l = 'algorithm12';
+var dependencies$m = ['typed', 'DenseMatrix'];
+var createAlgorithm12 = /* #__PURE__ */factory(name$l, dependencies$m, _ref => {
   var {
     typed,
     DenseMatrix
@@ -13326,9 +13133,9 @@ var createAlgorithm12 = /* #__PURE__ */factory(name$m, dependencies$n, _ref => {
   };
 });
 
-var name$n = 'multiplyScalar';
-var dependencies$o = ['typed'];
-var createMultiplyScalar = /* #__PURE__ */factory(name$n, dependencies$o, _ref => {
+var name$m = 'multiplyScalar';
+var dependencies$n = ['typed'];
+var createMultiplyScalar = /* #__PURE__ */factory(name$m, dependencies$n, _ref => {
   var {
     typed
   } = _ref;
@@ -13372,9 +13179,9 @@ var createMultiplyScalar = /* #__PURE__ */factory(name$n, dependencies$o, _ref =
   });
 });
 
-var name$o = 'multiply';
-var dependencies$p = ['typed', 'matrix', 'addScalar', 'multiplyScalar', 'equalScalar', 'dot'];
-var createMultiply = /* #__PURE__ */factory(name$o, dependencies$p, _ref => {
+var name$n = 'multiply';
+var dependencies$o = ['typed', 'matrix', 'addScalar', 'multiplyScalar', 'equalScalar', 'dot'];
+var createMultiply = /* #__PURE__ */factory(name$n, dependencies$o, _ref => {
   var {
     typed,
     matrix,
@@ -14187,7 +13994,7 @@ var createMultiply = /* #__PURE__ */factory(name$o, dependencies$p, _ref => {
    */
 
 
-  return typed(name$o, extend({
+  return typed(name$n, extend({
     // we extend the signatures of multiplyScalar with signatures dealing with matrices
     'Array, Array': function ArrayArray(x, y) {
       // check dimensions
@@ -14267,9 +14074,9 @@ var createMultiply = /* #__PURE__ */factory(name$o, dependencies$p, _ref => {
   }, multiplyScalar.signatures));
 });
 
-var name$p = 'subtract';
-var dependencies$q = ['typed', 'matrix', 'equalScalar', 'addScalar', 'unaryMinus', 'DenseMatrix'];
-var createSubtract = /* #__PURE__ */factory(name$p, dependencies$q, _ref => {
+var name$o = 'subtract';
+var dependencies$p = ['typed', 'matrix', 'equalScalar', 'addScalar', 'unaryMinus', 'DenseMatrix'];
+var createSubtract = /* #__PURE__ */factory(name$o, dependencies$p, _ref => {
   var {
     typed,
     matrix,
@@ -14333,7 +14140,7 @@ var createSubtract = /* #__PURE__ */factory(name$p, dependencies$q, _ref => {
    *            Subtraction of `x` and `y`
    */
 
-  return typed(name$p, {
+  return typed(name$o, {
     'number, number': function numberNumber(x, y) {
       return x - y;
     },
@@ -14430,9 +14237,9 @@ function checkEqualDimensions(x, y) {
   }
 }
 
-var name$q = 'algorithm07';
-var dependencies$r = ['typed', 'DenseMatrix'];
-var createAlgorithm07 = /* #__PURE__ */factory(name$q, dependencies$r, _ref => {
+var name$p = 'algorithm07';
+var dependencies$q = ['typed', 'DenseMatrix'];
+var createAlgorithm07 = /* #__PURE__ */factory(name$p, dependencies$q, _ref => {
   var {
     typed,
     DenseMatrix
@@ -14547,9 +14354,9 @@ var createAlgorithm07 = /* #__PURE__ */factory(name$q, dependencies$r, _ref => {
   }
 });
 
-var name$r = 'conj';
-var dependencies$s = ['typed'];
-var createConj = /* #__PURE__ */factory(name$r, dependencies$s, _ref => {
+var name$q = 'conj';
+var dependencies$r = ['typed'];
+var createConj = /* #__PURE__ */factory(name$q, dependencies$r, _ref => {
   var {
     typed
   } = _ref;
@@ -14579,7 +14386,7 @@ var createConj = /* #__PURE__ */factory(name$r, dependencies$s, _ref => {
    * @return {number | BigNumber | Complex | Array | Matrix}
    *            The complex conjugate of x
    */
-  return typed(name$r, {
+  return typed(name$q, {
     number: function number(x) {
       return x;
     },
@@ -14595,9 +14402,9 @@ var createConj = /* #__PURE__ */factory(name$r, dependencies$s, _ref => {
   });
 });
 
-var name$s = 'identity';
-var dependencies$t = ['typed', 'config', 'matrix', 'BigNumber', 'DenseMatrix', 'SparseMatrix'];
-var createIdentity = /* #__PURE__ */factory(name$s, dependencies$t, _ref => {
+var name$r = 'identity';
+var dependencies$s = ['typed', 'config', 'matrix', 'BigNumber', 'DenseMatrix', 'SparseMatrix'];
+var createIdentity = /* #__PURE__ */factory(name$r, dependencies$s, _ref => {
   var {
     typed,
     config,
@@ -14637,7 +14444,7 @@ var createIdentity = /* #__PURE__ */factory(name$s, dependencies$t, _ref => {
    *
    * @return {Matrix | Array | number} A matrix with ones on the diagonal.
    */
-  return typed(name$s, {
+  return typed(name$r, {
     '': function _() {
       return config.matrix === 'Matrix' ? matrix([]) : [];
     },
@@ -14749,9 +14556,9 @@ function noMatrix() {
   throw new Error('No "matrix" implementation available');
 }
 
-var name$t = 'size';
-var dependencies$u = ['typed', 'config', '?matrix'];
-var createSize = /* #__PURE__ */factory(name$t, dependencies$u, _ref => {
+var name$s = 'size';
+var dependencies$t = ['typed', 'config', '?matrix'];
+var createSize = /* #__PURE__ */factory(name$s, dependencies$t, _ref => {
   var {
     typed,
     config,
@@ -14781,7 +14588,7 @@ var createSize = /* #__PURE__ */factory(name$t, dependencies$u, _ref => {
    * @param {boolean | number | Complex | Unit | string | Array | Matrix} x  A matrix
    * @return {Array | Matrix} A vector with size of `x`.
    */
-  return typed(name$t, {
+  return typed(name$s, {
     Matrix: function Matrix(x) {
       return x.create(x.size());
     },
@@ -14796,9 +14603,9 @@ var createSize = /* #__PURE__ */factory(name$t, dependencies$u, _ref => {
   });
 });
 
-var name$u = 'transpose';
-var dependencies$v = ['typed', 'matrix'];
-var createTranspose = /* #__PURE__ */factory(name$u, dependencies$v, _ref => {
+var name$t = 'transpose';
+var dependencies$u = ['typed', 'matrix'];
+var createTranspose = /* #__PURE__ */factory(name$t, dependencies$u, _ref => {
   var {
     typed,
     matrix
@@ -14969,9 +14776,9 @@ var createTranspose = /* #__PURE__ */factory(name$u, dependencies$v, _ref => {
   }
 });
 
-var name$v = 'numeric';
-var dependencies$w = ['number', '?bignumber', '?fraction'];
-var createNumeric = /* #__PURE__ */factory(name$v, dependencies$w, _ref => {
+var name$u = 'numeric';
+var dependencies$v = ['number', '?bignumber', '?fraction'];
+var createNumeric = /* #__PURE__ */factory(name$u, dependencies$v, _ref => {
   var {
     number: _number,
     bignumber,
@@ -15037,9 +14844,9 @@ var createNumeric = /* #__PURE__ */factory(name$v, dependencies$w, _ref => {
   };
 });
 
-var name$w = 'divideScalar';
-var dependencies$x = ['typed', 'numeric'];
-var createDivideScalar = /* #__PURE__ */factory(name$w, dependencies$x, _ref => {
+var name$v = 'divideScalar';
+var dependencies$w = ['typed', 'numeric'];
+var createDivideScalar = /* #__PURE__ */factory(name$v, dependencies$w, _ref => {
   var {
     typed,
     numeric
@@ -15057,7 +14864,7 @@ var createDivideScalar = /* #__PURE__ */factory(name$w, dependencies$x, _ref => 
    * @return {number | BigNumber | Fraction | Complex | Unit}     Quotient, `x / y`
    * @private
    */
-  return typed(name$w, {
+  return typed(name$v, {
     'number, number': function numberNumber(x, y) {
       return x / y;
     },
@@ -15091,9 +14898,9 @@ var createDivideScalar = /* #__PURE__ */factory(name$w, dependencies$x, _ref => 
   });
 });
 
-var name$x = 'smaller';
-var dependencies$y = ['typed', 'config', 'matrix', 'DenseMatrix'];
-var createSmaller = /* #__PURE__ */factory(name$x, dependencies$y, _ref => {
+var name$w = 'smaller';
+var dependencies$x = ['typed', 'config', 'matrix', 'DenseMatrix'];
+var createSmaller = /* #__PURE__ */factory(name$w, dependencies$x, _ref => {
   var {
     typed,
     config,
@@ -15149,7 +14956,7 @@ var createSmaller = /* #__PURE__ */factory(name$x, dependencies$y, _ref => {
    * @return {boolean | Array | Matrix} Returns true when the x is smaller than y, else returns false
    */
 
-  return typed(name$x, {
+  return typed(name$w, {
     'boolean, boolean': function booleanBoolean(x, y) {
       return x < y;
     },
@@ -15219,9 +15026,9 @@ var createSmaller = /* #__PURE__ */factory(name$x, dependencies$y, _ref => {
   });
 });
 
-var name$y = 'larger';
-var dependencies$z = ['typed', 'config', 'matrix', 'DenseMatrix'];
-var createLarger = /* #__PURE__ */factory(name$y, dependencies$z, _ref => {
+var name$x = 'larger';
+var dependencies$y = ['typed', 'config', 'matrix', 'DenseMatrix'];
+var createLarger = /* #__PURE__ */factory(name$x, dependencies$y, _ref => {
   var {
     typed,
     config,
@@ -15277,7 +15084,7 @@ var createLarger = /* #__PURE__ */factory(name$y, dependencies$z, _ref => {
    * @return {boolean | Array | Matrix} Returns true when the x is larger than y, else returns false
    */
 
-  return typed(name$y, {
+  return typed(name$x, {
     'boolean, boolean': function booleanBoolean(x, y) {
       return x > y;
     },
@@ -15347,9 +15154,9 @@ var createLarger = /* #__PURE__ */factory(name$y, dependencies$z, _ref => {
   });
 });
 
-var name$z = 'FibonacciHeap';
-var dependencies$A = ['smaller', 'larger'];
-var createFibonacciHeapClass = /* #__PURE__ */factory(name$z, dependencies$A, _ref => {
+var name$y = 'FibonacciHeap';
+var dependencies$z = ['smaller', 'larger'];
+var createFibonacciHeapClass = /* #__PURE__ */factory(name$y, dependencies$z, _ref => {
   var {
     smaller,
     larger
@@ -15736,9 +15543,9 @@ var createFibonacciHeapClass = /* #__PURE__ */factory(name$z, dependencies$A, _r
   isClass: true
 });
 
-var name$A = 'Spa';
-var dependencies$B = ['addScalar', 'equalScalar', 'FibonacciHeap'];
-var createSpaClass = /* #__PURE__ */factory(name$A, dependencies$B, _ref => {
+var name$z = 'Spa';
+var dependencies$A = ['addScalar', 'equalScalar', 'FibonacciHeap'];
+var createSpaClass = /* #__PURE__ */factory(name$z, dependencies$A, _ref => {
   var {
     addScalar,
     equalScalar,
@@ -15890,131 +15697,9 @@ var createSpaClass = /* #__PURE__ */factory(name$A, dependencies$B, _ref => {
   isClass: true
 });
 
-var name$B = 'add';
-var dependencies$C = ['typed', 'matrix', 'addScalar', 'equalScalar', 'DenseMatrix', 'SparseMatrix'];
-var createAdd = /* #__PURE__ */factory(name$B, dependencies$C, _ref => {
-  var {
-    typed,
-    matrix,
-    addScalar,
-    equalScalar,
-    DenseMatrix,
-    SparseMatrix
-  } = _ref;
-  var algorithm01 = createAlgorithm01({
-    typed
-  });
-  var algorithm04 = createAlgorithm04({
-    typed,
-    equalScalar
-  });
-  var algorithm10 = createAlgorithm10({
-    typed,
-    DenseMatrix
-  });
-  var algorithm13 = createAlgorithm13({
-    typed
-  });
-  var algorithm14 = createAlgorithm14({
-    typed
-  });
-  /**
-   * Add two or more values, `x + y`.
-   * For matrices, the function is evaluated element wise.
-   *
-   * Syntax:
-   *
-   *    math.add(x, y)
-   *    math.add(x, y, z, ...)
-   *
-   * Examples:
-   *
-   *    math.add(2, 3)               // returns number 5
-   *    math.add(2, 3, 4)            // returns number 9
-   *
-   *    const a = math.complex(2, 3)
-   *    const b = math.complex(-4, 1)
-   *    math.add(a, b)               // returns Complex -2 + 4i
-   *
-   *    math.add([1, 2, 3], 4)       // returns Array [5, 6, 7]
-   *
-   *    const c = math.unit('5 cm')
-   *    const d = math.unit('2.1 mm')
-   *    math.add(c, d)               // returns Unit 52.1 mm
-   *
-   *    math.add("2.3", "4")         // returns number 6.3
-   *
-   * See also:
-   *
-   *    subtract, sum
-   *
-   * @param  {number | BigNumber | Fraction | Complex | Unit | Array | Matrix} x First value to add
-   * @param  {number | BigNumber | Fraction | Complex | Unit | Array | Matrix} y Second value to add
-   * @return {number | BigNumber | Fraction | Complex | Unit | Array | Matrix} Sum of `x` and `y`
-   */
-
-  return typed(name$B, extend({
-    // we extend the signatures of addScalar with signatures dealing with matrices
-    'DenseMatrix, DenseMatrix': function DenseMatrixDenseMatrix(x, y) {
-      return algorithm13(x, y, addScalar);
-    },
-    'DenseMatrix, SparseMatrix': function DenseMatrixSparseMatrix(x, y) {
-      return algorithm01(x, y, addScalar, false);
-    },
-    'SparseMatrix, DenseMatrix': function SparseMatrixDenseMatrix(x, y) {
-      return algorithm01(y, x, addScalar, true);
-    },
-    'SparseMatrix, SparseMatrix': function SparseMatrixSparseMatrix(x, y) {
-      return algorithm04(x, y, addScalar);
-    },
-    'Array, Array': function ArrayArray(x, y) {
-      // use matrix implementation
-      return this(matrix(x), matrix(y)).valueOf();
-    },
-    'Array, Matrix': function ArrayMatrix(x, y) {
-      // use matrix implementation
-      return this(matrix(x), y);
-    },
-    'Matrix, Array': function MatrixArray(x, y) {
-      // use matrix implementation
-      return this(x, matrix(y));
-    },
-    'DenseMatrix, any': function DenseMatrixAny(x, y) {
-      return algorithm14(x, y, addScalar, false);
-    },
-    'SparseMatrix, any': function SparseMatrixAny(x, y) {
-      return algorithm10(x, y, addScalar, false);
-    },
-    'any, DenseMatrix': function anyDenseMatrix(x, y) {
-      return algorithm14(y, x, addScalar, true);
-    },
-    'any, SparseMatrix': function anySparseMatrix(x, y) {
-      return algorithm10(y, x, addScalar, true);
-    },
-    'Array, any': function ArrayAny(x, y) {
-      // use matrix implementation
-      return algorithm14(matrix(x), y, addScalar, false).valueOf();
-    },
-    'any, Array': function anyArray(x, y) {
-      // use matrix implementation
-      return algorithm14(matrix(y), x, addScalar, true).valueOf();
-    },
-    'any, any': addScalar,
-    'any, any, ...any': function anyAnyAny(x, y, rest) {
-      var result = this(x, y);
-
-      for (var i = 0; i < rest.length; i++) {
-        result = this(result, rest[i]);
-      }
-
-      return result;
-    }
-  }, addScalar.signatures));
-});
-
-var name$C = 'dot';
-var dependencies$D = ['typed', 'addScalar', 'multiplyScalar', 'conj', 'size'];
-var createDot = /* #__PURE__ */factory(name$C, dependencies$D, _ref => {
+var name$A = 'dot';
+var dependencies$B = ['typed', 'addScalar', 'multiplyScalar', 'conj', 'size'];
+var createDot = /* #__PURE__ */factory(name$A, dependencies$B, _ref => {
   var {
     typed,
     addScalar,
@@ -16046,7 +15731,7 @@ var createDot = /* #__PURE__ */factory(name$C, dependencies$D, _ref => {
    * @param  {Array | Matrix} y     Second vector
    * @return {number}               Returns the dot product of `x` and `y`
    */
-  return typed(name$C, {
+  return typed(name$A, {
     'Array | DenseMatrix, Array | DenseMatrix': _denseDot,
     'SparseMatrix, SparseMatrix': _sparseDot
   });
@@ -16188,9 +15873,9 @@ var createDot = /* #__PURE__ */factory(name$C, dependencies$D, _ref => {
   }
 });
 
-var name$D = 'lup';
-var dependencies$E = ['typed', 'matrix', 'abs', 'addScalar', 'divideScalar', 'multiplyScalar', 'subtract', 'larger', 'equalScalar', 'unaryMinus', 'DenseMatrix', 'SparseMatrix', 'Spa'];
-var createLup = /* #__PURE__ */factory(name$D, dependencies$E, _ref => {
+var name$B = 'lup';
+var dependencies$C = ['typed', 'matrix', 'abs', 'addScalar', 'divideScalar', 'multiplyScalar', 'subtract', 'larger', 'equalScalar', 'unaryMinus', 'DenseMatrix', 'SparseMatrix', 'Spa'];
+var createLup = /* #__PURE__ */factory(name$B, dependencies$C, _ref => {
   var {
     typed,
     matrix,
@@ -16233,7 +15918,7 @@ var createLup = /* #__PURE__ */factory(name$D, dependencies$E, _ref => {
    *
    * @return {{L: Array | Matrix, U: Array | Matrix, P: Array.<number>}} The lower triangular matrix, the upper triangular matrix and the permutation matrix.
    */
-  return typed(name$D, {
+  return typed(name$B, {
     DenseMatrix: function DenseMatrix(m) {
       return _denseLUP(m);
     },
@@ -16600,9 +16285,9 @@ var createLup = /* #__PURE__ */factory(name$D, dependencies$E, _ref => {
   }
 });
 
-var name$E = 'det';
-var dependencies$F = ['typed', 'matrix', 'subtract', 'multiply', 'unaryMinus', 'lup'];
-var createDet = /* #__PURE__ */factory(name$E, dependencies$F, _ref => {
+var name$C = 'det';
+var dependencies$D = ['typed', 'matrix', 'subtract', 'multiply', 'unaryMinus', 'lup'];
+var createDet = /* #__PURE__ */factory(name$C, dependencies$D, _ref => {
   var {
     typed,
     matrix,
@@ -16637,7 +16322,7 @@ var createDet = /* #__PURE__ */factory(name$E, dependencies$F, _ref => {
    * @param {Array | Matrix} x  A matrix
    * @return {number} The determinant of `x`
    */
-  return typed(name$E, {
+  return typed(name$C, {
     any: function any(x) {
       return clone(x);
     },
@@ -16744,9 +16429,9 @@ var createDet = /* #__PURE__ */factory(name$E, dependencies$F, _ref => {
   }
 });
 
-var name$F = 'inv';
-var dependencies$G = ['typed', 'matrix', 'divideScalar', 'addScalar', 'multiply', 'unaryMinus', 'det', 'identity', 'abs'];
-var createInv = /* #__PURE__ */factory(name$F, dependencies$G, _ref => {
+var name$D = 'inv';
+var dependencies$E = ['typed', 'matrix', 'divideScalar', 'addScalar', 'multiply', 'unaryMinus', 'det', 'identity', 'abs'];
+var createInv = /* #__PURE__ */factory(name$D, dependencies$E, _ref => {
   var {
     typed,
     matrix,
@@ -16779,7 +16464,7 @@ var createInv = /* #__PURE__ */factory(name$F, dependencies$G, _ref => {
    * @param {number | Complex | Array | Matrix} x     Matrix to be inversed
    * @return {number | Complex | Array | Matrix} The inverse of `x`.
    */
-  return typed(name$F, {
+  return typed(name$D, {
     'Array | Matrix': function ArrayMatrix(x) {
       var size = isMatrix(x) ? x.size() : arraySize(x);
 
@@ -17029,14 +16714,6 @@ var FibonacciHeap = /* #__PURE__ */createFibonacciHeapClass({
   larger,
   smaller
 });
-var add$1 = /* #__PURE__ */createAdd({
-  DenseMatrix,
-  SparseMatrix,
-  addScalar,
-  equalScalar,
-  matrix,
-  typed
-});
 var dot = /* #__PURE__ */createDot({
   addScalar,
   conj,
@@ -17117,4 +16794,4 @@ var inv = /* #__PURE__ */createInv({
   unaryMinus
 });
 
-export { add$1 as add, identity, inv, matrix, multiply, transpose };
+export { inv, matrix, multiply, transpose };

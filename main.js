@@ -6,19 +6,26 @@ import plot from "./helpers/plot.js";
 import getAllData from "./helpers/getAllData.js";
 import handleInputChange from "./helpers/handleInputChange.js";
 import onReady from "./helpers/onReady.js";
+import timeit from "./src/helpers/timeit.js";
 
 const PLOT_ID = "plot";
 
 // render function will run every time the state of the application changes
 // that is, if the slider is adjusted or more data is added.
-function render(state) {
+async function render(state) {
   // update lambda to match the state value
   document.querySelector("#lambda-value").textContent = state.lambda;
 
   // get points for the spline
   const data = getAllData(state);
-  const smoothSpline = simpleSmoothingSpline(data, { lambda: state.lambda });
-  const cubicSpline = simpleSmoothingSpline(data, { type: "cubic" });
+
+  timeit.start("simpleSmoothingSpline: smooth");
+  const smoothSpline = await simpleSmoothingSpline(data, {
+    lambda: state.lambda,
+  });
+  timeit.stop("simpleSmoothingSpline: smooth", { log: true });
+
+  const cubicSpline = await simpleSmoothingSpline(data, { type: "cubic" });
 
   // render plot with data and smoothing spline points
   plot(
