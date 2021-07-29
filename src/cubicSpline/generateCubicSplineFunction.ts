@@ -1,4 +1,4 @@
-import { matrix, transpose, inv, multiply } from "mathjs";
+import Matrix from "../matrix/index";
 import getAllXs from "../helpers/getAllXs";
 import getAllYs from "../helpers/getAllYs";
 import { Point, SplineFunction } from "../types";
@@ -26,18 +26,23 @@ import { Point, SplineFunction } from "../types";
  * See: https://en.wikipedia.org/wiki/Polynomial_regression
  */
 
-export default (data: Point[]): SplineFunction => {
+export default async (data: Point[]): Promise<SplineFunction> => {
   const xs = getAllXs(data);
   const ys = getAllYs(data);
 
-  const basisMatrix = matrix(xs.map((x) => [1, x, x ** 2, x ** 3]));
-  const transposedBasisMatrix = transpose(basisMatrix);
-  const Ycol = transpose(matrix(ys));
-  const inverseXtX = inv(multiply(transposedBasisMatrix, basisMatrix));
-  const betas = multiply(multiply(inverseXtX, transposedBasisMatrix), Ycol);
+  const basisMatrix = new Matrix(xs.map((x) => [1, x, x ** 2, x ** 3]));
+  const transposedBasisMatrix = await basisMatrix.transpose();
+  const Y = await new Matrix([ys]).transpose();
+
+  const betas: number[] = await transposedBasisMatrix
+    .multiply(basisMatrix)
+    .then((M) => M.inverse())
+    .then((M) => M.multiply(Y))
+    .then((M) => M.toArray().flat());
 
   // spline function is b0 + b1*x + b2*x^2 + b3*x^3
   return (x: number): number => {
-    return multiply(betas, [1, x, x ** 2, x ** 3]) as unknown as number;
+    const basis = [1, x, x ** 2, x ** 3];
+    return betas.reduce((acc, beta, i) => acc + beta * basis[i], 0);
   };
 };

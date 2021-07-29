@@ -34,7 +34,7 @@
     "lint": "eslint",
     "publish": "npm run build && np",
     "clean": "rimraf dist example/dist",
-    "build": "npm run clean && npm run lint && tsc --project tsconfig.json && npm run bundle",
+    "build": "npm run clean && npm ci && npm run lint && tsc --project tsconfig.json && npm run bundle",
     "bundle": "rollup -c rollup.config.js dist/index.js",
     "gh-pages:build": "snowpack build",
     "gh-pages:serve": "npx serve build",
@@ -68,7 +68,6 @@
   },
   "dependencies": {
     "eigen": "^0.2.0",
-    "mathjs": "^9.4.4",
     "ml-matrix": "^6.8.0"
   }
 }

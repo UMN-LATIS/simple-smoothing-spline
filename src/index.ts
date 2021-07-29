@@ -36,7 +36,7 @@ export default async function smoothingSpline(
   let splineFn: SplineFunction;
 
   if (type === "cubic") {
-    splineFn = generateCubicSplineFunction(data);
+    splineFn = await generateCubicSplineFunction(data);
   } else {
     splineFn = await generateSmoothingSplineFunction(data, { lambda });
   }
