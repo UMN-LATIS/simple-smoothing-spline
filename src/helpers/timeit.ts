@@ -9,9 +9,15 @@ const timeit = (name: string) => {
 };
 
 timeit.start = (name: string) => marky.mark(name);
-timeit.stop = (name: string) => {
+timeit.stop = (
+  name: string,
+  { log = false }: { log?: boolean } = {}
+): number => {
   const time = marky.stop(name);
-  console.log(`👉⏱ ${name} ${time.duration.toFixed(4)}ms`);
+  if (log) {
+    console.log(`👉⏱ ${name} ${time.duration.toFixed(4)}ms`);
+  }
+  return time.duration;
 };
 
 export default timeit;
