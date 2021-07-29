@@ -4,15 +4,8 @@ import getAllYs from "../helpers/getAllYs";
 import { Point } from "../types";
 
 /**
- * Uses Ridge regression to solve the linear system:
- *    X*β = y
- * where:
- *  X is the matrix of basis functions made from the
- *    x values of the given data set
- *  β is the coefficients to our smoothing
- *    spline function
- *  y is the column vector of y values from the given
- *    data set
+ * smoothingSpline uses Ridge regression to find the smoothing spline
+ * that balance the fit of the data with smoothness of the curve
  *
  * The solution for β̂ can be found with:
  *  β̂ = (transpose(X) * X + λ*I)^-1
@@ -20,6 +13,12 @@ import { Point } from "../types";
  *
  * See: https://online.stat.psu.edu/stat857/node/155/
  */
+
+/**
+ * Naive approach to using Ridge Regression
+ * Can be pretty unstable, but also can be fast.
+ */
+
 export async function solveForBetasNaive(
   data: Point[],
   lambda: number
@@ -40,24 +39,6 @@ export async function solveForBetasNaive(
     Xtrans.multiply(y),
   ]);
   const betas = await innerInv.multiply(XtY);
-
-  console.log(
-    JSON.stringify(
-      {
-        X,
-        y,
-        Xtrans,
-        λI,
-        XtX,
-        inner,
-        innerInv,
-        XtY,
-        betas,
-      },
-      null,
-      2
-    )
-  );
 
   // clean up memory
   Matrix._flushMemory();
