@@ -16,17 +16,6 @@ export async function solveForBetasNaive(data, lambda) {
     Xtrans.multiply(y)
   ]);
   const betas = await innerInv.multiply(XtY);
-  console.log(JSON.stringify({
-    X,
-    y,
-    Xtrans,
-    λI,
-    XtX,
-    inner,
-    innerInv,
-    XtY,
-    betas
-  }, null, 2));
   Matrix._flushMemory();
   return betas.toArray().flat();
 }

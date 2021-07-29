@@ -1,6 +1,4 @@
-import { g as getDefaultExportFromNamespaceIfNotNamed, a as getDefaultExportFromCjs, c as createCommonjsModule, b as commonjsGlobal } from './common/_commonjsHelpers-bc388fbf.js';
-
-var global = (typeof global !== "undefined" ? global :
+var global$1 = (typeof global$1 !== "undefined" ? global$1 :
   typeof self !== "undefined" ? self :
   typeof window !== "undefined" ? window : {});
 
@@ -238,8 +236,8 @@ var INSPECT_MAX_BYTES = 50;
  * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
  * get the Object implementation, which is slower but behaves correctly.
  */
-Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
-  ? global.TYPED_ARRAY_SUPPORT
+Buffer.TYPED_ARRAY_SUPPORT = global$1.TYPED_ARRAY_SUPPORT !== undefined
+  ? global$1.TYPED_ARRAY_SUPPORT
   : true;
 
 function kMaxLength () {
@@ -2198,6 +2196,30 @@ var process = {
   config: config,
   uptime: uptime
 };
+
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function getDefaultExportFromCjs (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+
+function createCommonjsModule(fn, basedir, module) {
+	return module = {
+		path: basedir,
+		exports: {},
+		require: function (path, base) {
+			return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
+		}
+	}, fn(module, module.exports), module.exports;
+}
+
+function getDefaultExportFromNamespaceIfNotNamed (n) {
+	return n && Object.prototype.hasOwnProperty.call(n, 'default') && Object.keys(n).length === 1 ? n['default'] : n;
+}
+
+function commonjsRequire () {
+	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
+}
 
 // Copyright Joyent, Inc. and other Node contributors.
 //

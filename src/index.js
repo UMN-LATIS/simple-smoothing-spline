@@ -14,7 +14,7 @@ async function generateSplinePoints(splineFn, data) {
 export default async function smoothingSpline(data, {lambda = 1e3, type = "smoothing"} = {}) {
   let splineFn;
   if (type === "cubic") {
-    splineFn = generateCubicSplineFunction(data);
+    splineFn = await generateCubicSplineFunction(data);
   } else {
     splineFn = await generateSmoothingSplineFunction(data, {lambda});
   }
