@@ -61,11 +61,7 @@ describe("simple-smoothing-spline", () => {
     expect(spline.fn(0)).toBeCloseTo(9, 0.001);
   });
 
-  it.skip("should be performant", async () => {
-    // target right now is for 600ms for n=500.
-    // and for it to scale O(n^3)
-    // So, expected time/n = 600/(500^3) = 0.0000048 ms/pt
-    const expectedMSperPoint = 600 / 500 ** 3;
+  it("should be somewhat performant", async () => {
     const dataSet = range(0, 500).map((x) => ({
       x,
       y: Math.sin(x) + 0.1 * Math.random() - 0.5,
@@ -75,10 +71,7 @@ describe("simple-smoothing-spline", () => {
     await smoothingSpline(dataSet);
     const runtime = timeit.stop("smoothingSpline");
 
-    // expect ~O(n^3) runtime?
-    const expectedRuntime = expectedMSperPoint * dataSet.length ** 3;
-    // console.log({ runtime, expectedRuntime });
-    expect(runtime).toBeLessThan(expectedRuntime);
+    expect(runtime).toBeLessThan(1000);
   });
 });
 
