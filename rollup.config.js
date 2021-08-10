@@ -26,5 +26,5 @@ export default {
       plugins: [terser()],
     },
   ],
-  plugins: [nodeResolve(), commonjs()],
+  plugins: [nodeResolve(), commonjs(), nodePolyfills({ crypto: true })],
 };

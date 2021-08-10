@@ -10,7 +10,8 @@
     "target": "es2019",
     "outDir": "./dist",
     "esModuleInterop": true,
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules", "src/**/*.test.ts", "types"]
