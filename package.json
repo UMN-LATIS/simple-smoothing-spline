@@ -1,5 +1,5 @@
 {
-  "name": "simple-smoothing-spline",
+  "name": "@umn-latis/simple-smoothing-spline",
   "description": "Fit a smoothing spline to collection of data points",
   "version": "0.3.0",
   "license": "MIT",
