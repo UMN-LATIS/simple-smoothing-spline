@@ -1,5 +1,6 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { terser } from "rollup-plugin-terser";
 
 export default {
@@ -26,5 +27,5 @@ export default {
       plugins: [terser()],
     },
   ],
-  plugins: [nodeResolve(), commonjs()],
+  plugins: [nodeResolve(), commonjs(), nodePolyfills({ sourceMap: true })],
 };

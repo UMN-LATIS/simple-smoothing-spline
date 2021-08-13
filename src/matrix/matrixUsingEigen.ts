@@ -37,11 +37,10 @@ export default class Matrix implements MatrixLike<Matrix> {
   // EigenMatrix ops are async so we cannot create #eigenMatrix
   // in the constructor. If we're given an array, we'll store it
   // in #data and create the matrix when we do our first operation.
-  _data: number[][] = [[]];
-  // _eigenMatrix: EigenMatrix | null = null;
-  _eigenMatrix: EigenMatrixType | null = null;
-  _svd: EigenSVD | null = null;
-  _svdIsDirty: boolean = true;
+  private _data: number[][] = [[]];
+  private _eigenMatrix: EigenMatrixType | null = null;
+  private _svd: EigenSVD | null = null;
+  private _svdIsDirty: boolean = true;
   rows: number = 0;
   cols: number = 0;
 

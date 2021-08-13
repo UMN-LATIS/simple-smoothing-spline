@@ -1,3 +1,4 @@
+import rollupPluginNodePolyfills from "rollup-plugin-node-polyfills";
 // import { nodeResolve } from "@rollup/plugin-node-resolve";
 // import commonjs from "@rollup/plugin-commonjs";
 // import { terser } from "rollup-plugin-terser";
@@ -11,12 +12,16 @@ export default {
     // src: "/dist",
     example: "/",
     src: "/src",
+    dist: "/dist",
   },
   plugins: [
     /* ... */
   ],
   packageOptions: {
     polyfillNode: true,
+    rollup: {
+      plugins: [rollupPluginNodePolyfills({ crypto: true })],
+    },
   },
   devOptions: {
     /* ... */
