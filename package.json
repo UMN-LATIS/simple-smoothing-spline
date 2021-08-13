@@ -70,5 +70,8 @@
   "dependencies": {
     "eigen": "^0.2.0",
     "ml-matrix": "^6.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
