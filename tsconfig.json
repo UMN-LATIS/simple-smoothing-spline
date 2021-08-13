@@ -11,7 +11,7 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "typeRoots": ["./types", "./node_modules/@types"],
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*.ts", "types/**/*.ts"],
   "exclude": ["dist", "node_modules", "src/**/*.test.ts"]
