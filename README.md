@@ -34,11 +34,11 @@ const myY = spline.fn(2.5);
 ### Using NPM or Yarn
 
 ```console
-npm install simple-smoothing-spline
+npm install @umn-latis/simple-smoothing-spline
 ```
 
 ```console
-yarn add simple-smoothing-spline
+yarn add @umn-latis/simple-smoothing-spline
 ```
 
 ### With a `<script>` tag
@@ -48,7 +48,7 @@ Added this **before** your main script:
 ```html
 <!-- index.html -->
 <script
-  src="https://unpkg.com/simple-smoothing-spline/dist/index.umd.min.js"
+  src="https://unpkg.com/@umn-latis/simple-smoothing-spline/dist/index.umd.min.js"
   async
 ></script>
 ```
