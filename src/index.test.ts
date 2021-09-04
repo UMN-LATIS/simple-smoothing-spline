@@ -1,7 +1,5 @@
 import { expect } from "@jest/globals";
 import smoothingSpline from "./index";
-import timeit from "./helpers/timeit";
-import range from "./helpers/range";
 import randomData from "./helpers/randomData";
 
 const dataWithSomeNoise = randomData.getPoints(100);
@@ -60,33 +58,4 @@ describe("simple-smoothing-spline", () => {
     const spline = await smoothingSpline(data, { lambda: 0.01 });
     expect(spline.fn(0)).toBeCloseTo(9, 0.001);
   });
-
-  it.skip("should be performant", async () => {
-    // target right now is for 600ms for n=500.
-    // and for it to scale O(n^3)
-    // So, expected time/n = 600/(500^3) = 0.0000048 ms/pt
-    const expectedMSperPoint = 600 / 500 ** 3;
-    const dataSet = range(0, 500).map((x) => ({
-      x,
-      y: Math.sin(x) + 0.1 * Math.random() - 0.5,
-    }));
-
-    timeit.start("smoothingSpline");
-    await smoothingSpline(dataSet);
-    const runtime = timeit.stop("smoothingSpline");
-
-    // expect ~O(n^3) runtime?
-    const expectedRuntime = expectedMSperPoint * dataSet.length ** 3;
-    // console.log({ runtime, expectedRuntime });
-    expect(runtime).toBeLessThan(expectedRuntime);
-  });
 });
-
-// describe("natural spline", () => {
-//   // to begin assume a cubic spline that's a best fit
-//   // for the data set
-//   it("fits a cubic spline with no knots", () => {
-//     const spline = smoothingSpline(data, { type: "cubic" });
-//     expect(spline.points).toMatchSnapshot();
-//   });
-// });
