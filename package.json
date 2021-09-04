@@ -4,15 +4,15 @@
   "version": "0.4.2",
   "license": "MIT",
   "repository": "UMN-LATIS/simple-smoothing-spline",
-  "main": "dist/index.js",
-  "module": "dist/index.min.js",
+  "main": "dist/index.mjs",
+  "module": "dist/index.min.mjs",
   "unpkg": "dist/index.umd.min.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "type": "module",
-  "exports": "./dist/index.js",
+  "exports": "./dist/index.mjs",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
@@ -34,7 +34,7 @@
     "lint": "eslint",
     "release": "release-it",
     "clean": "rimraf dist example/dist",
-    "build": "npm run clean && npm ci && npm run lint && npm run bundle",
+    "build": "npm run clean && npm ci && npm run lint && tsc && npm run bundle",
     "bundle": "rollup -c rollup.config.js",
     "gh-pages:build": "vite build && touch example/build/.nojekyll",
     "gh-pages:serve": "npx serve example/build",
@@ -48,7 +48,6 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
-    "@rollup/plugin-typescript": "^8.2.5",
     "@types/globalthis": "^1.0.1",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.7.10",
