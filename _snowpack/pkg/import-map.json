@@ -1,7 +1,0 @@
-{
-  "imports": {
-    "eigen": "./eigen.js",
-    "marky": "./marky.js",
-    "ml-matrix": "./ml-matrix.js"
-  }
-}
