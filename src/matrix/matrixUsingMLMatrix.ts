@@ -8,20 +8,20 @@ import {
 import { MatrixLike, MatrixMapperFunction } from "../types";
 
 export default class Matrix implements MatrixLike<Matrix> {
-  #mlMatrix: MLMatrix;
+  _mlMatrix: MLMatrix;
 
   constructor(data: number[][] | MLMatrix | Matrix = [[]]) {
     if (data instanceof MLMatrix) {
-      this.#mlMatrix = data;
+      this._mlMatrix = data;
       return;
     }
 
     if (data instanceof Matrix) {
-      this.#mlMatrix = new MLMatrix(data.#mlMatrix);
+      this._mlMatrix = new MLMatrix(data._mlMatrix);
       return;
     }
 
-    this.#mlMatrix = new MLMatrix(data);
+    this._mlMatrix = new MLMatrix(data);
   }
 
   static zero(rows: number, cols: number): Matrix {
@@ -34,23 +34,23 @@ export default class Matrix implements MatrixLike<Matrix> {
   }
 
   get rows(): number {
-    return this.#mlMatrix.rows;
+    return this._mlMatrix.rows;
   }
 
   get cols(): number {
-    return this.#mlMatrix.columns;
+    return this._mlMatrix.columns;
   }
 
   toArray(): number[][] {
-    return this.#mlMatrix.to2DArray();
+    return this._mlMatrix.to2DArray();
   }
 
   get(row: number, col: number): number {
-    return this.#mlMatrix.get(row, col);
+    return this._mlMatrix.get(row, col);
   }
 
   set(row: number, col: number, value: number): void {
-    this.#mlMatrix.set(row, col, value);
+    this._mlMatrix.set(row, col, value);
   }
   map(fn: MatrixMapperFunction): Promise<Matrix> {
     throw new Error("Method not implemented.");
@@ -58,12 +58,12 @@ export default class Matrix implements MatrixLike<Matrix> {
 
   transpose(): Promise<Matrix> {
     return new Promise((resolve) => {
-      resolve(new Matrix(this.#mlMatrix.transpose()));
+      resolve(new Matrix(this._mlMatrix.transpose()));
     });
   }
 
   determinant(): Promise<number> {
-    return Promise.resolve(determinant(this.#mlMatrix));
+    return Promise.resolve(determinant(this._mlMatrix));
   }
 
   inverse(): Promise<Matrix> {
@@ -73,11 +73,11 @@ export default class Matrix implements MatrixLike<Matrix> {
       // calculating the determeinant to see if it's invertible
       // and faster than calculating the pseudoinverse all the time
       try {
-        const inv = inverse(this.#mlMatrix);
+        const inv = inverse(this._mlMatrix);
         resolve(new Matrix(inv));
       } catch (e) {
         // if inverse does not exist, use svd
-        const invWithSvd = inverse(this.#mlMatrix, true);
+        const invWithSvd = inverse(this._mlMatrix, true);
         resolve(new Matrix(invWithSvd));
       }
     });
@@ -90,14 +90,14 @@ export default class Matrix implements MatrixLike<Matrix> {
           `Cannot multiply matrices. Cols of left matrix (${this.rows}x${this.cols}) must equal rows of right matrix (${matrix.rows}x${matrix.cols}).`
         );
       }
-      const product = this.#mlMatrix.mmul(matrix.#mlMatrix);
+      const product = this._mlMatrix.mmul(matrix._mlMatrix);
       return resolve(new Matrix(product));
     });
   }
 
   multiplyScalar(scalar: number): Promise<Matrix> {
     return new Promise((resolve) => {
-      const product = this.#mlMatrix.mul(scalar);
+      const product = this._mlMatrix.mul(scalar);
       resolve(new Matrix(product));
     });
   }
@@ -106,7 +106,7 @@ export default class Matrix implements MatrixLike<Matrix> {
     // TODO: check that rows and cols match
     // maybe mlMatrix does this already? We should test.
     return new Promise((resolve) => {
-      const sum = this.#mlMatrix.add(otherMatrix.#mlMatrix);
+      const sum = this._mlMatrix.add(otherMatrix._mlMatrix);
       resolve(new Matrix(sum));
     });
   }
@@ -116,7 +116,7 @@ export default class Matrix implements MatrixLike<Matrix> {
    */
   toSVD(): Promise<{ U: Matrix; S: Matrix; V: Matrix }> {
     return new Promise((resolve) => {
-      const svd = new SingularValueDecomposition(this.#mlMatrix, {
+      const svd = new SingularValueDecomposition(this._mlMatrix, {
         autoTranspose: true,
       });
 
@@ -130,10 +130,10 @@ export default class Matrix implements MatrixLike<Matrix> {
 
   static solve(leftHandSide: Matrix, rightHandSide: Matrix): Promise<Matrix> {
     return new Promise((resolve) => {
-      const SVD = new SingularValueDecomposition(leftHandSide.#mlMatrix, {
+      const SVD = new SingularValueDecomposition(leftHandSide._mlMatrix, {
         autoTranspose: true,
       });
-      const solution = SVD.solve(rightHandSide.#mlMatrix);
+      const solution = SVD.solve(rightHandSide._mlMatrix);
       resolve(new Matrix(solution));
     });
   }

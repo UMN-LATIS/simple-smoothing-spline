@@ -3,6 +3,10 @@ import generateCubicSplineFunction from "./cubicSpline/generateCubicSplineFuncti
 import getAllXs from "./helpers/getAllXs";
 import { Point, SplineFunction } from "./types";
 
+// shim global
+import shim from 'globalthis/shim'; 
+shim();
+
 async function generateSplinePoints(
   splineFn: (x: number) => number,
   data: Point[]
