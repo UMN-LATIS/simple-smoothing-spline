@@ -1,31 +1,35 @@
+import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { terser } from "rollup-plugin-terser";
 
 export default {
-  input: "dist/index.js",
+  input: "src/index.ts",
   output: [
     {
-      file: "dist/index.mjs",
+      file: "dist/index.js",
+      sourcemap: true,
       format: "esm",
     },
     {
-      file: "dist/index.min.mjs",
+      file: "dist/index.min.js",
       format: "esm",
+      sourcemap: true,
       plugins: [terser()],
     },
     {
       file: "dist/index.umd.min.js",
       format: "umd",
+      sourcemap: true,
       name: "simpleSmoothingSpline",
     },
     {
       file: "dist/index.umd.min.js",
       format: "umd",
       name: "simpleSmoothingSpline",
+      sourcemap: true,
       plugins: [terser()],
     },
   ],
-  plugins: [nodeResolve(), commonjs(), nodePolyfills({ sourceMap: true })],
+  plugins: [typescript(), nodeResolve({ browser: true }), commonjs()],
 };

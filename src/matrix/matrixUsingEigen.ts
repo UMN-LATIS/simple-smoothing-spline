@@ -34,13 +34,14 @@ interface EigenSVD {
 }
 
 export default class Matrix implements MatrixLike<Matrix> {
-  // EigenMatrix ops are async so we cannot create #eigenMatrix
+  // EigenMatrix ops are async so we cannot create _eigenMatrix
   // in the constructor. If we're given an array, we'll store it
-  // in #data and create the matrix when we do our first operation.
-  private _data: number[][] = [[]];
-  private _eigenMatrix: EigenMatrixType | null = null;
-  private _svd: EigenSVD | null = null;
-  private _svdIsDirty: boolean = true;
+  // in _data and create the matrix when we do our first operation.
+  _data: number[][] = [[]];
+  // _eigenMatrix: EigenMatrix | null = null;
+  _eigenMatrix: EigenMatrixType | null = null;
+  _svd: EigenSVD | null = null;
+  _svdIsDirty: boolean = true;
   rows: number = 0;
   cols: number = 0;
 
@@ -85,10 +86,10 @@ export default class Matrix implements MatrixLike<Matrix> {
     }
   }
 
-  async #getEigenMatrix(): Promise<EigenMatrixType> {
+  async _getEigenMatrix(): Promise<EigenMatrixType> {
     if (this._eigenMatrix) return this._eigenMatrix;
     if (!this._eigenMatrix && !this._data) {
-      throw Error("Cannot get this EigenMatrix: No #eigenMatrix or #data");
+      throw Error("Cannot get this EigenMatrix: No _eigenMatrix or _data");
     }
 
     await eigen.ready;
@@ -96,11 +97,11 @@ export default class Matrix implements MatrixLike<Matrix> {
     return this._eigenMatrix;
   }
 
-  async #getSVD(): Promise<EigenSVD> {
+  async _getSVD(): Promise<EigenSVD> {
     if (this._svd && !this._svdIsDirty) return this._svd;
 
     // if no SVD exists, calculate it
-    const M = await this.#getEigenMatrix();
+    const M = await this._getEigenMatrix();
     this._svd = eigen.Decompositions.svd(M, true);
     this._svdIsDirty = false;
     return this._svd;
@@ -130,18 +131,18 @@ export default class Matrix implements MatrixLike<Matrix> {
   }
 
   async transpose(): Promise<Matrix> {
-    const M = await this.#getEigenMatrix();
+    const M = await this._getEigenMatrix();
     return new Matrix(M.transpose());
   }
 
   async determinant(): Promise<number> {
-    const M = await this.#getEigenMatrix();
+    const M = await this._getEigenMatrix();
     return M.det();
   }
 
   async inverse(useSVD = true): Promise<Matrix> {
     if (!useSVD) {
-      const M = await this.#getEigenMatrix();
+      const M = await this._getEigenMatrix();
       return new Matrix(M.inverse());
     }
 
@@ -155,7 +156,7 @@ export default class Matrix implements MatrixLike<Matrix> {
     // U  is the left singular matrix
     // sv is the vector of sigma values
     // V  is the right singular matrix
-    const { U, sv, V } = await this.#getSVD();
+    const { U, sv, V } = await this._getSVD();
 
     const Ut = U.transpose();
 
@@ -197,19 +198,19 @@ export default class Matrix implements MatrixLike<Matrix> {
         `Cannot multiply matrices: cols of left matrix (${this.rows}x${this.cols}) must equal rows of right matrix (${matrix.rows}x${matrix.cols}).`
       );
     }
-    const M = await this.#getEigenMatrix();
-    const N = await matrix.#getEigenMatrix();
+    const M = await this._getEigenMatrix();
+    const N = await matrix._getEigenMatrix();
     return new Matrix(M.matMul(N));
   }
 
   async multiplyScalar(scalar: number): Promise<Matrix> {
-    const M = await this.#getEigenMatrix();
+    const M = await this._getEigenMatrix();
     return new Matrix(M.mul(scalar));
   }
 
   async add(matrix: Matrix): Promise<Matrix> {
-    const M = await this.#getEigenMatrix();
-    const N = await matrix.#getEigenMatrix();
+    const M = await this._getEigenMatrix();
+    const N = await matrix._getEigenMatrix();
     return new Matrix(M.matAdd(N));
   }
 
@@ -231,7 +232,7 @@ export default class Matrix implements MatrixLike<Matrix> {
   }
 
   async toSVD(): Promise<SingleValueDecomposition<Matrix>> {
-    const { U, sv, V } = await this.#getSVD();
+    const { U, sv, V } = await this._getSVD();
     return {
       U: new Matrix(U),
       sigmaVector: eigenMatrixToArray(sv).flat(),
