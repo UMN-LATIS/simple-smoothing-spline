@@ -4,7 +4,7 @@
  const config = {
   root: './example',
   build: {
-    outDir: 'build',
+    outDir: './build',
     sourcemap: true,
   },
   define: {

@@ -36,9 +36,9 @@
     "clean": "rimraf dist example/dist",
     "build": "npm run clean && npm ci && npm run lint && npm run bundle",
     "bundle": "rollup -c rollup.config.js",
-    "gh-pages:build": "vite build && touch build/.nojekyll",
-    "gh-pages:serve": "npx serve build",
-    "gh-pages:publish": "gh-pages --dotfiles --dist build",
+    "gh-pages:build": "vite build && touch example/build/.nojekyll",
+    "gh-pages:serve": "npx serve example/build",
+    "gh-pages:publish": "gh-pages --dotfiles --dist example/build",
     "gh-pages": "npm run gh-pages:build && npm run gh-pages:publish"
   },
   "author": {
