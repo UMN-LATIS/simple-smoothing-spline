@@ -1,11 +1,11 @@
 {
   "name": "@umn-latis/simple-smoothing-spline",
   "description": "Fit a smoothing spline to collection of data points",
-  "version": "0.3.0",
+  "version": "0.4.2",
   "license": "MIT",
   "repository": "UMN-LATIS/simple-smoothing-spline",
   "main": "dist/index.js",
-  "module": "dist/index.min.mjs",
+  "module": "dist/index.min.js",
   "unpkg": "dist/index.umd.min.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -26,17 +26,17 @@
     "analysis"
   ],
   "scripts": {
-    "start": "snowpack dev",
-    "dev": "snowpack dev",
+    "start": "vite",
+    "dev": "vite",
     "prepublishOnly": "npm run build",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint",
     "publish": "npm run build && np",
     "clean": "rimraf dist example/dist",
-    "build": "npm run clean && npm ci && npm run lint && tsc --project tsconfig.json && npm run bundle",
-    "bundle": "rollup -c rollup.config.js dist/index.js",
-    "gh-pages:build": "snowpack build && touch build/.nojekyll",
+    "build": "npm run clean && npm ci && npm run lint && npm run bundle",
+    "bundle": "rollup -c rollup.config.js",
+    "gh-pages:build": "vite build && touch build/.nojekyll",
     "gh-pages:serve": "npx serve build",
     "gh-pages:publish": "gh-pages --dotfiles --dist build",
     "gh-pages": "npm run gh-pages:build && npm run gh-pages:publish"
@@ -46,28 +46,33 @@
     "email": "johnsojr@umn.edu"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^19.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
-    "@types/jest": "^26.0.24",
-    "@types/node": "^16.4.7",
-    "concurrently": "^6.2.0",
-    "eslint": "^7.30.0",
-    "jest": "^27.0.6",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-typescript": "^8.2.5",
+    "@types/globalthis": "^1.0.1",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.10",
+    "concurrently": "^6.2.1",
+    "eslint": "^7.32.0",
+    "jest": "^27.1.0",
     "marky": "^1.2.2",
     "np": "^7.5.0",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.53.1",
+    "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
     "serve": "^12.0.0",
-    "snowpack": "^3.8.3",
-    "terser": "^5.7.1",
-    "ts-jest": "^27.0.3",
-    "ts-node": "^10.1.0",
-    "typescript": "^4.3.5"
+    "snowpack": "^3.8.8",
+    "terser": "^5.7.2",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.2",
+    "vite": "^2.5.3"
   },
   "dependencies": {
     "eigen": "^0.2.0",
+    "globalthis": "^1.0.2",
     "ml-matrix": "^6.8.0"
   }
 }
