@@ -74,5 +74,8 @@
     "eigen": "^0.2.0",
     "globalthis": "^1.0.2",
     "ml-matrix": "^6.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
