@@ -9,7 +9,8 @@
   },
   define: {
     "global": {},
-  }
+  },
+  base: '/simple-smoothing-spline/'
 }
 
 export default config
